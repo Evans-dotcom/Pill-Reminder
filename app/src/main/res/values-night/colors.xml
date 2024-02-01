@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPurple">#8B0AA2</color>
+    <color name="backgroundTint">#333333</color>
+    <color name="textColorDefault">#FFFFFF</color>
+    <color name="backgroundTintGreenish">#4C5351</color>
+    <color name="lightOrange">#FF8D69</color>
+    <color name="lightBlue">#BAE1FF</color>
+    <color name="skyBlue">#2196F3</color>
+    <color name="orange">#FF5722</color>
+    <color name="primaryBlue">#0050DF</color>
+    <color name="red">#FF0000</color>
+    <color name="green">#00FF00</color>
+</resources>
