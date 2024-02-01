@@ -1,25 +1,31 @@
 package com.evans.pillreminder.fragments;
 
-import static com.evans.pillreminder.helpers.Constants.MY_TAG;
-
 import android.annotation.SuppressLint;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
 import com.evans.pillreminder.R;
+import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.Calendar;
+import java.util.Objects;
 
 public class AddMedicationFragment extends Fragment implements View.OnClickListener, TimePickerDialog.OnTimeSetListener {
     TextView tvAddMedReminder;
+    Button btnAddMedDiscard, btnAddMedSave;
+    TextInputEditText editTextAddMedName, editTextAddMedDose, editTextAddMedNote;
+    AppCompatSpinner spinnerMedicationForm;
 
     public AddMedicationFragment() {
         // Required empty public constructor
@@ -50,8 +56,16 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tvAddMedReminder = view.findViewById(R.id.tvAddMedReminderTime);
+        btnAddMedSave = view.findViewById(R.id.btnAddMedSave);
+        btnAddMedDiscard = view.findViewById(R.id.btnAddMedDiscard);
+        editTextAddMedName = view.findViewById(R.id.tiEditTextAddMedName);
+        spinnerMedicationForm = view.findViewById(R.id.spinnerAddMedForm);
+        editTextAddMedDose = view.findViewById(R.id.tiEditTextAddMedDose);
+        editTextAddMedNote = view.findViewById(R.id.tiEditTextAddMedNote);
 
         tvAddMedReminder.setOnClickListener(this);
+        btnAddMedSave.setOnClickListener(this);
+        btnAddMedDiscard.setOnClickListener(this);
     }
 
     /**
@@ -61,12 +75,55 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
      */
     @Override
     public void onClick(View v) {
-        Log.w(MY_TAG, "onClick: Clicked" +
-                (v.getId() == R.id.tvAddMedReminderTime));
         if (v.getId() == R.id.tvAddMedReminderTime) {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), this, 0, 0, true);
+            Calendar now = Calendar.getInstance();
+            TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), this,
+                    now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
+        } else if (v.getId() == R.id.btnAddMedSave) {
+            // verify the fields
+            if (!verifyInputs(/*send the focus to the view that has not been filled*/)) {
+                return;
+            }
+            // apply the necessary pill images
+
+            // save data to local database (SQLITE)
+
+            // if connected to internet, upload to the server (FIREBASE)
+
+        } else if (v.getId() == R.id.btnAddMedDiscard) {
+            editTextAddMedName.setText("");
+            editTextAddMedDose.setText("");
+            editTextAddMedNote.setText("");
+            // reset spinner to point at element 0
         }
+    }
+
+    private boolean verifyInputs() {
+        if (Objects.requireNonNull(editTextAddMedName.getText()).toString().equals("")) {
+            // change drawable color and add it to the errors
+            editTextAddMedName.setError("Provide the name of the medication");
+            editTextAddMedName.setTextInputLayoutFocusedRectEnabled(true);
+            return false;
+        }
+        if (Objects.requireNonNull(editTextAddMedDose.getText()).toString().equals("")) {
+            // change drawable color and add it to the errors
+            editTextAddMedDose.setError("Provide medication dosage as prescribed by the physician");
+            editTextAddMedDose.setTextInputLayoutFocusedRectEnabled(true);
+            return false;
+        }
+        if (tvAddMedReminder.getText().equals("")) {
+            // change drawable color and add it to the errors
+            tvAddMedReminder.setError("Please select reminder time");
+            return false;
+        }
+        if (Objects.requireNonNull(editTextAddMedNote.getText()).toString().equals("")) {
+            // change drawable color and add it to the errors
+            editTextAddMedNote.setError("Enter a note to self or doctor's comment");
+            editTextAddMedNote.setTextInputLayoutFocusedRectEnabled(true);
+            return false;
+        }
+        return true;
     }
 
     /**

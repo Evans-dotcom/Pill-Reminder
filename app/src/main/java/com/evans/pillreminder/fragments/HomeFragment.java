@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +24,6 @@ import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.DosageRecyclerAdapter;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +33,7 @@ import java.util.Date;
 public class HomeFragment extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
     RecyclerView dosageRecyclerView;
     TextView selectedDate;
+    AppCompatImageButton btnPrevDate, btnNextDate;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -73,6 +74,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         selectedDate = view.findViewById(R.id.selectedDate);
+        btnNextDate = view.findViewById(R.id.homeFragCalendarNext);
+        btnPrevDate = view.findViewById(R.id.homeFragCalendarPrev);
+
         Calendar today = Calendar.getInstance();
         selectedDate.setText(today.get(Calendar.DAY_OF_MONTH) + " " +
                 MONTHS[today.get(Calendar.MONTH)]
@@ -80,6 +84,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         dosageRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
 
         selectedDate.setOnClickListener(this);
+        btnPrevDate.setOnClickListener(this);
+        btnNextDate.setOnClickListener(this);
 
         dosageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         dosageRecyclerView.setAdapter(new DosageRecyclerAdapter());
@@ -98,6 +104,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
                     this, today.get(Calendar.YEAR), today.get(Calendar.MONTH),
                     today.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
+        } else if (v.getId() == R.id.homeFragCalendarPrev) {
+        } else if (v.getId() == R.id.homeFragCalendarNext) {
         }
     }
 
