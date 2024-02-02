@@ -17,11 +17,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.DosageRecyclerAdapter;
+import com.evans.pillreminder.db.MedicationViewModel;
 
 import java.util.Calendar;
 
@@ -34,6 +36,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
     RecyclerView dosageRecyclerView;
     TextView selectedDate;
     AppCompatImageButton btnPrevDate, btnNextDate;
+    private MedicationViewModel medicationViewModel;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,7 +72,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -83,12 +86,19 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
                 + " " + today.get(Calendar.YEAR));
         dosageRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
 
+        DosageRecyclerAdapter dosageRecyclerAdapter = new DosageRecyclerAdapter();
+        medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), word -> {
+            // update the cached copy of the words in the adapter
+            dosageRecyclerAdapter.notifyDataSetChanged(); // FIXME
+        });
+
         selectedDate.setOnClickListener(this);
         btnPrevDate.setOnClickListener(this);
         btnNextDate.setOnClickListener(this);
 
         dosageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        dosageRecyclerView.setAdapter(new DosageRecyclerAdapter());
+        dosageRecyclerView.setAdapter(dosageRecyclerAdapter);
     }
 
     /**
