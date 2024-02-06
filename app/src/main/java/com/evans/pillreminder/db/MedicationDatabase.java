@@ -12,20 +12,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Medication.class}, version = 1, exportSchema = false)
-public abstract class MedicationRoomDatabase extends RoomDatabase {
+public abstract class MedicationDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-    private static volatile MedicationRoomDatabase INSTANCE;
+    private static volatile MedicationDatabase INSTANCE;
 
-    static MedicationRoomDatabase getDatabase(final Context context) {
+    public static synchronized MedicationDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            synchronized (MedicationRoomDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    MedicationRoomDatabase.class, DB_ROOM_DB_NAME)
-                            .build();
-                }
-            }
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), MedicationDatabase.class, DB_ROOM_DB_NAME)
+                    .fallbackToDestructiveMigration()
+                    .build();
         }
         return INSTANCE;
     }

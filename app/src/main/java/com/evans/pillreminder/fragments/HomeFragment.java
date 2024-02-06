@@ -17,15 +17,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.DosageRecyclerAdapter;
+import com.evans.pillreminder.db.Medication;
 import com.evans.pillreminder.db.MedicationViewModel;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -79,6 +82,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         selectedDate = view.findViewById(R.id.selectedDate);
         btnNextDate = view.findViewById(R.id.homeFragCalendarNext);
         btnPrevDate = view.findViewById(R.id.homeFragCalendarPrev);
+
+        // view model
+        medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
+            @Override
+            public void onChanged(List<Medication> medications) {
+                // update the UI
+            }
+        });
+        // end view model
 
         Calendar today = Calendar.getInstance();
         selectedDate.setText(today.get(Calendar.DAY_OF_MONTH) + " " +

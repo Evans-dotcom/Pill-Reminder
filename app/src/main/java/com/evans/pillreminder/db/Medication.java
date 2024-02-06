@@ -19,11 +19,9 @@ public class Medication {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
-
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_NAME)
     private String medicationName;
-
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_FORM)
     private String medicationForm;
@@ -39,7 +37,6 @@ public class Medication {
     @Nullable
     @ColumnInfo(name = DB_COLUMN_MEDICATION_DOSAGE_FOR)
     private String medicationFor; // x days, x weeks, x months
-
     public Medication(@NonNull String medicationName, @NonNull String medicationForm,
                       @NonNull String medicationDosage, @NonNull String medicationDate,
                       @Nullable String medicationNote, @NonNull String medicationFor) {
@@ -49,6 +46,14 @@ public class Medication {
         this.medicationDate = medicationDate;
         this.medicationNote = medicationNote;
         this.medicationFor = medicationFor;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getMedId() {
