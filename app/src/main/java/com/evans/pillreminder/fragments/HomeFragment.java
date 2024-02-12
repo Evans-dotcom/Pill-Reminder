@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
-import com.evans.pillreminder.adapters.DosageRecyclerAdapter;
+import com.evans.pillreminder.adapters.MedicationRecyclerAdapter;
 import com.evans.pillreminder.db.Medication;
 import com.evans.pillreminder.db.MedicationViewModel;
 
@@ -36,7 +36,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
-    RecyclerView dosageRecyclerView;
+    RecyclerView medicationRecyclerView;
     TextView selectedDate;
     AppCompatImageButton btnPrevDate, btnNextDate;
     private MedicationViewModel medicationViewModel;
@@ -97,21 +97,28 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         selectedDate.setText(today.get(Calendar.DAY_OF_MONTH) + " " +
                 MONTHS[today.get(Calendar.MONTH)]
                 + " " + today.get(Calendar.YEAR));
-        dosageRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
 
-        DosageRecyclerAdapter dosageRecyclerAdapter = new DosageRecyclerAdapter();
+        medicationRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
+        medicationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        medicationRecyclerView.setHasFixedSize(true);
+
+        MedicationRecyclerAdapter medicationRecyclerAdapter = new MedicationRecyclerAdapter();
+        medicationRecyclerView.setAdapter(medicationRecyclerAdapter);
+
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), word -> {
-            // update the cached copy of the words in the adapter
-            dosageRecyclerAdapter.notifyDataSetChanged(); // FIXME
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
+            @Override
+            public void onChanged(List<Medication> medications) {
+                // update the cached copy of the words in the adapter
+                medicationRecyclerAdapter.setMedications(medications);
+                medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
+            }
         });
 
         selectedDate.setOnClickListener(this);
         btnPrevDate.setOnClickListener(this);
         btnNextDate.setOnClickListener(this);
 
-        dosageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        dosageRecyclerView.setAdapter(dosageRecyclerAdapter);
     }
 
     /**

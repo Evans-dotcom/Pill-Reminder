@@ -5,6 +5,7 @@ import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_DOSA
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FORM;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NAME;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NOTE;
+import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_REMINDER_TIME;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_START_DATE;
 import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME;
 
@@ -14,6 +15,9 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+/**
+ * Create a table in the SQLite database named DB_TABLE_NAME
+ */
 @Entity(tableName = DB_TABLE_NAME)
 public class Medication {
 
@@ -24,28 +28,44 @@ public class Medication {
     private String medicationName;
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_FORM)
-    private String medicationForm;
+    private String medicationForm; /* tablet, liquids etc*/
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_DOSAGE)
     private String medicationDosage;
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_START_DATE)
     private String medicationDate; // TODO: use date object instead
+
+    @NonNull
+    @ColumnInfo(name = DB_COLUMN_MEDICATION_REMINDER_TIME)
+    private String medicationReminderTime; // TODO: use date object instead
     @Nullable
     @ColumnInfo(name = DB_COLUMN_MEDICATION_NOTE)
     private String medicationNote;
     @Nullable
     @ColumnInfo(name = DB_COLUMN_MEDICATION_DOSAGE_FOR)
     private String medicationFor; // x days, x weeks, x months
+
     public Medication(@NonNull String medicationName, @NonNull String medicationForm,
                       @NonNull String medicationDosage, @NonNull String medicationDate,
-                      @Nullable String medicationNote, @NonNull String medicationFor) {
+                      @NonNull String medicationReminderTime, @NonNull String medicationFor,
+                      @Nullable String medicationNote) {
         this.medicationName = medicationName;
         this.medicationForm = medicationForm;
         this.medicationDosage = medicationDosage;
         this.medicationDate = medicationDate;
-        this.medicationNote = medicationNote;
+        this.medicationReminderTime = medicationReminderTime;
         this.medicationFor = medicationFor;
+        this.medicationNote = medicationNote;
+    }
+
+    @NonNull
+    public String getMedicationReminderTime() {
+        return medicationReminderTime;
+    }
+
+    public void setMedicationReminderTime(@NonNull String medicationReminderTime) {
+        this.medicationReminderTime = medicationReminderTime;
     }
 
     public int getId() {
@@ -58,6 +78,10 @@ public class Medication {
 
     public int getMedId() {
         return id;
+    }
+
+    public void setMedId(int id) {
+        this.id = id;
     }
 
     @NonNull
