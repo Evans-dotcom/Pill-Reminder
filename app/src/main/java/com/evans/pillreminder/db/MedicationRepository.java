@@ -2,6 +2,7 @@ package com.evans.pillreminder.db;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 
@@ -25,19 +26,19 @@ public class MedicationRepository {
 
     // You must call this on a non-UI thread or your app will crash.
     // Room ensures that you don't do any long-running operations on the main thread, blocking the UI.
-    void insert(Medication medication) {
+    public void insert(Medication medication) {
         new InsertAsyncTask(medicationDAO).execute(medication);
     }
 
-    void update(Medication medication) {
+    public void update(Medication medication) {
         new UpdateAsyncTask(medicationDAO).execute(medication);
     }
 
-    void delete(Medication medication) {
+    public void delete(Medication medication) {
         new DeleteAsyncTask(medicationDAO).execute(medication);
     }
 
-    void deleteAll() {
+    public void deleteAll() {
         new DeleteAllAsyncTask(medicationDAO).execute();
     }
 
@@ -69,6 +70,7 @@ public class MedicationRepository {
         @Override
         protected Void doInBackground(Medication... medications) {
             medicationDAO.insert(medications[0]);
+            Log.w("M_Tag", "doInBackground: " + medications[0].getMedicationName());
             return null;
         }
     }

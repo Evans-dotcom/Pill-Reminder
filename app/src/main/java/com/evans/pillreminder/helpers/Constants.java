@@ -12,6 +12,7 @@ public class Constants {
     public static final String DB_COLUMN_MEDICATION_FORM = "med_form";
     public static final String DB_COLUMN_MEDICATION_DOSAGE = "med_dosage";
     public static final String DB_COLUMN_MEDICATION_START_DATE = "med_start_date";
+    public static final String DB_COLUMN_MEDICATION_REMINDER_TIME = "med_reminder_time";
     public static final String DB_COLUMN_MEDICATION_NOTE = "med_note";
     public static final String DB_COLUMN_MEDICATION_DOSAGE_FOR = "med_duration"; // prescription duration
 //    public static final String DB_COLUMN_MEDICATION_

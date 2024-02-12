@@ -1,9 +1,9 @@
 package com.evans.pillreminder.helpers;
 
-public class Medication {
+public class MedicationPill {
     private String medicineName, medicineForm, medicineDose, medReminderTime, note;
 
-    public Medication(String medicineName, String medicineForm, String medicineDose, String medReminderTime, String note) {
+    public MedicationPill(String medicineName, String medicineForm, String medicineDose, String medReminderTime, String note) {
         this.medicineName = medicineName;
         this.medicineForm = medicineForm;
         this.medicineDose = medicineDose;
@@ -11,7 +11,7 @@ public class Medication {
         this.note = note;
     }
 
-    public Medication(String medicineName, String medicineForm, String medicineDose, String medReminderTime) {
+    public MedicationPill(String medicineName, String medicineForm, String medicineDose, String medReminderTime) {
         this.medicineName = medicineName;
         this.medicineForm = medicineForm;
         this.medicineDose = medicineDose;

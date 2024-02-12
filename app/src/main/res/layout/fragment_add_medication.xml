@@ -41,11 +41,11 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiEditTextAddMedName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tiEditTextAddMedName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Enter Medication Name"
@@ -76,16 +76,33 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tiEditTextAddMedDose"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tiEditTextAddMedDose"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Enter Dose"
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Date Issued: *"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvAddMedDateIssued"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangular_frame"
+                    android:hint="Date Medication Issued"
+                    android:padding="10dp"
+                    android:textSize="24sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -104,6 +121,44 @@
                     android:padding="10dp"
                     android:textSize="24sp" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="To be taken for: *"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tiEditTextMedFor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="For"
+                            android:inputType="number"
+                            android:textSize="16sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/spinnerMedPeriods"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/medication_periods"
+                        android:minHeight="50dp" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -119,7 +174,6 @@
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tiEditTextAddMedNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="top"
