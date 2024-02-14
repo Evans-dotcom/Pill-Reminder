@@ -31,11 +31,53 @@ android {
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation 'androidx.core:core:1.12.0'
+
     // customs
 //    implementation 'com.polyak:icon-switch:1.0.0'
+
+    // database (ROOMS)
+    // Room components
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+    androidTestImplementation "androidx.room:room-testing:2.6.1"
+
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-livedata:2.7.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.7.0"
+
+    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    // end-database (ROOMS)
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.7.0"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata:2.7.0"
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation "androidx.lifecycle:lifecycle-runtime:2.7.0"
+    // Saved state module for ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0"
+    // Annotation processor
+    // annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.7.0"
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.7.0"
+    // optional - helpers for implementing LifecycleOwner in a Service
+    implementation "androidx.lifecycle:lifecycle-service:2.7.0"
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    implementation "androidx.lifecycle:lifecycle-process:2.7.0"
+    // optional - ReactiveStreams support for LiveData
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:2.7.0"
+    // optional - Test helpers for LiveData
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    // optional - Test helpers for Lifecycle runtime
+    testImplementation "androidx.lifecycle:lifecycle-runtime-testing:2.7.0"
 }

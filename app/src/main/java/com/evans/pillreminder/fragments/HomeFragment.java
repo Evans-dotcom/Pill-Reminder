@@ -15,15 +15,20 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
-import com.evans.pillreminder.adapters.DosageRecyclerAdapter;
+import com.evans.pillreminder.adapters.MedicationRecyclerAdapter;
+import com.evans.pillreminder.db.Medication;
+import com.evans.pillreminder.db.MedicationViewModel;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,8 +36,10 @@ import java.util.Date;
  * create an instance of this fragment.
  */
 public class HomeFragment extends Fragment implements View.OnClickListener, DatePickerDialog.OnDateSetListener {
-    RecyclerView dosageRecyclerView;
+    RecyclerView medicationRecyclerView;
     TextView selectedDate;
+    AppCompatImageButton btnPrevDate, btnNextDate;
+    private MedicationViewModel medicationViewModel;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -68,21 +75,50 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         selectedDate = view.findViewById(R.id.selectedDate);
+        btnNextDate = view.findViewById(R.id.homeFragCalendarNext);
+        btnPrevDate = view.findViewById(R.id.homeFragCalendarPrev);
+
+        // view model
+        medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
+            @Override
+            public void onChanged(List<Medication> medications) {
+                // update the UI
+            }
+        });
+        // end view model
+
         Calendar today = Calendar.getInstance();
         selectedDate.setText(today.get(Calendar.DAY_OF_MONTH) + " " +
                 MONTHS[today.get(Calendar.MONTH)]
                 + " " + today.get(Calendar.YEAR));
-        dosageRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
+
+        medicationRecyclerView = view.findViewById(R.id.homePlanRecyclerView);
+        medicationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        medicationRecyclerView.setHasFixedSize(true);
+
+        MedicationRecyclerAdapter medicationRecyclerAdapter = new MedicationRecyclerAdapter();
+        medicationRecyclerView.setAdapter(medicationRecyclerAdapter);
+
+        medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
+            @Override
+            public void onChanged(List<Medication> medications) {
+                // update the cached copy of the words in the adapter
+                medicationRecyclerAdapter.setMedications(medications);
+                medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
+            }
+        });
 
         selectedDate.setOnClickListener(this);
+        btnPrevDate.setOnClickListener(this);
+        btnNextDate.setOnClickListener(this);
 
-        dosageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        dosageRecyclerView.setAdapter(new DosageRecyclerAdapter());
     }
 
     /**
@@ -98,6 +134,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
                     this, today.get(Calendar.YEAR), today.get(Calendar.MONTH),
                     today.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
+        } else if (v.getId() == R.id.homeFragCalendarPrev) {
+        } else if (v.getId() == R.id.homeFragCalendarNext) {
         }
     }
 
