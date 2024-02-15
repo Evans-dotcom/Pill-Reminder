@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MedicationViewModel extends AndroidViewModel {
     private final LiveData<List<Medication>> allMedications;
-    private MedicationRepository medicationRepository;
+    private final MedicationRepository medicationRepository;
 
     public MedicationViewModel(Application application) {
         super(application);
@@ -23,6 +23,8 @@ public class MedicationViewModel extends AndroidViewModel {
 
     public void insert(Medication medication) {
         medicationRepository.insert(medication);
+        // Trigger synchronization with Firestore after insert
+//        medicationRepository.uploadLocalChangesToFirestore();
     }
 
     public void update(Medication medication) {

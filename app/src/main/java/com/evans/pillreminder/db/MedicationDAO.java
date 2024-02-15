@@ -1,5 +1,6 @@
 package com.evans.pillreminder.db;
 
+import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_REMINDER_TIME;
 import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME;
 
@@ -29,4 +30,14 @@ public interface MedicationDAO {
 
     @Query("DELETE FROM " + DB_TABLE_NAME)
     void deleteAll();
+
+    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE synced = 0")
+    List<Medication> getUnsyncedMedications(); // Get unsynced medications
+
+    // Additional methods for syncing with Firestore
+    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = :documentId")
+    Medication getMedicationByDocumentId(String documentId);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertOrUpdate(Medication medication); // Insert or update medication record based on documentId
 }
