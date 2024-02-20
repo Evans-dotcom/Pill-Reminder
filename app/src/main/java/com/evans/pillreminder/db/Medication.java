@@ -2,6 +2,7 @@ package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_DOSAGE;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_DOSAGE_FOR;
+import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FORM;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NAME;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NOTE;
@@ -15,14 +16,29 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 /**
  * Create a table in the SQLite database named DB_TABLE_NAME
  */
+@IgnoreExtraProperties
 @Entity(tableName = DB_TABLE_NAME)
 public class Medication {
 
+    @Exclude
+    @ColumnInfo(name = DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID)
+    String documentId; // Firestore DocumentID
+
     @PrimaryKey(autoGenerate = true)
     private int id;
+    private boolean synced; // Flag to track sync status
+
     @NonNull
     @ColumnInfo(name = DB_COLUMN_MEDICATION_NAME)
     private String medicationName;
@@ -46,6 +62,11 @@ public class Medication {
     @ColumnInfo(name = DB_COLUMN_MEDICATION_DOSAGE_FOR)
     private String medicationFor; // x days, x weeks, x months
 
+    public Medication() {
+        // empty constructor for firebase firestore
+        // Default constructor required for calls to DataSnapshot.getValue(Medication.class)
+    }
+
     public Medication(@NonNull String medicationName, @NonNull String medicationForm,
                       @NonNull String medicationDosage, @NonNull String medicationDate,
                       @NonNull String medicationReminderTime, @NonNull String medicationFor,
@@ -57,6 +78,50 @@ public class Medication {
         this.medicationReminderTime = medicationReminderTime;
         this.medicationFor = medicationFor;
         this.medicationNote = medicationNote;
+        synced = false; // By default, medication is not synced
+    }
+
+    // Static method to create Medication object from a Firestore document snapshot
+    public static Medication fromSnapshot(DocumentSnapshot snapshot) {
+        Medication medication = new Medication();
+        medication.setDocumentId(snapshot.getId());
+        medication.setMedicationName(Objects.requireNonNull(snapshot.getString("medicationName")));
+        medication.setMedicationForm(Objects.requireNonNull(snapshot.getString("medicationForm")));
+        medication.setMedicationDosage(Objects.requireNonNull(snapshot.getString("medicationDosage")));
+        medication.setMedicationDate(Objects.requireNonNull(snapshot.getString("medicationDate")));
+        medication.setMedicationReminderTime(Objects.requireNonNull(snapshot.getString("medicationReminderTime")));
+        medication.setMedicationFor(Objects.requireNonNull(snapshot.getString("medicationFor")));
+        medication.setMedicationNote(snapshot.getString("medicationNote"));
+        return medication;
+    }
+
+    public boolean isSynced() {
+        return synced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.synced = synced;
+    }
+
+    // Method to convert Medication object to a Map for Firestore
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("medicationName", medicationName);
+        map.put("medicationForm", medicationForm);
+        map.put("medicationDosage", medicationDosage);
+        map.put("medicationDate", medicationDate);
+        map.put("medicationReminderTime", medicationReminderTime);
+        map.put("medicationFor", medicationFor);
+        map.put("medicationNote", medicationNote);
+        return map;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     @NonNull
