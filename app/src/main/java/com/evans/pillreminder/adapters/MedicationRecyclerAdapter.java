@@ -1,5 +1,8 @@
 package com.evans.pillreminder.adapters;
 
+import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +24,6 @@ import java.util.List;
 public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRecyclerAdapter.MedicationViewHolder> {
     List<Medication> medications = new ArrayList<>();
 
-//    {
-//        String[] pillNames = {"Piliton", "Amoxil", "Panadol", "ARV"};
-//        int[] pillDosages = {1, 5, 3, 1};
-//
-//        for (int i = 0; i < pillNames.length; i++) {
-//            dosage.add(new MedicineDosage(pillNames[i], pillDosages[i]));
-//        }
-//    }
-
     @NonNull
     @Override
     public MedicationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -41,6 +35,7 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
     public void onBindViewHolder(@NonNull MedicationViewHolder holder, int position) {
         holder.tvMedicationName.setText(medications.get(position).getMedicationName());
         holder.tvMedicationDosage.setText(medications.get(position).getMedicationDosage());
+        Log.i(MY_TAG, "Database Data: " + medications.get(position));
     }
 
     @Override

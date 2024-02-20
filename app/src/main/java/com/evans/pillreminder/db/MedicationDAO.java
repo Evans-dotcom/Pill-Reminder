@@ -1,6 +1,7 @@
 package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID;
+import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_SYNCED;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_REMINDER_TIME;
 import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME;
 
@@ -31,7 +32,7 @@ public interface MedicationDAO {
     @Query("DELETE FROM " + DB_TABLE_NAME)
     void deleteAll();
 
-    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE synced = 0")
+    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_SYNCED + " = 0 AND " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = 'EMPTY' ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
     List<Medication> getUnsyncedMedications(); // Get unsynced medications
 
     // Additional methods for syncing with Firestore

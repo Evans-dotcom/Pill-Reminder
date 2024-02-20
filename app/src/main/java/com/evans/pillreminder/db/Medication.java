@@ -3,6 +3,7 @@ package com.evans.pillreminder.db;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_DOSAGE;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_DOSAGE_FOR;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID;
+import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_SYNCED;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FORM;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NAME;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NOTE;
@@ -36,7 +37,8 @@ public class Medication {
     String documentId; // Firestore DocumentID
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int medicationID;
+    @ColumnInfo(name = DB_COLUMN_MEDICATION_FIRESTORE_SYNCED)
     private boolean synced; // Flag to track sync status
 
     @NonNull
@@ -79,6 +81,7 @@ public class Medication {
         this.medicationFor = medicationFor;
         this.medicationNote = medicationNote;
         synced = false; // By default, medication is not synced
+        this.documentId = "EMPTY";
     }
 
     // Static method to create Medication object from a Firestore document snapshot
@@ -93,6 +96,24 @@ public class Medication {
         medication.setMedicationFor(Objects.requireNonNull(snapshot.getString("medicationFor")));
         medication.setMedicationNote(snapshot.getString("medicationNote"));
         return medication;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+//        return super.toString();
+        return "Medication{" +
+                "documentId='" + documentId + '\'' +
+                ", mID=" + medicationID +
+                ", synced=" + synced +
+                ", medicationName='" + medicationName + '\'' +
+                ", medicationForm='" + medicationForm + '\'' +
+                ", medicationDosage='" + medicationDosage + '\'' +
+                ", medicationDate='" + medicationDate + '\'' +
+                ", medicationReminderTime='" + medicationReminderTime + '\'' +
+                ", medicationNote='" + medicationNote + '\'' +
+                ", medicationFor='" + medicationFor + '\'' +
+                '}';
     }
 
     public boolean isSynced() {
@@ -133,20 +154,20 @@ public class Medication {
         this.medicationReminderTime = medicationReminderTime;
     }
 
-    public int getId() {
-        return id;
+    public int getMedicationID() {
+        return medicationID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setMedicationID(int medicationID) {
+        this.medicationID = medicationID;
     }
 
     public int getMedId() {
-        return id;
+        return medicationID;
     }
 
     public void setMedId(int id) {
-        this.id = id;
+        this.medicationID = id;
     }
 
     @NonNull
