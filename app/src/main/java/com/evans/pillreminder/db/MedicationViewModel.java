@@ -23,8 +23,6 @@ public class MedicationViewModel extends AndroidViewModel {
 
     public void insert(Medication medication) {
         medicationRepository.insert(medication);
-        // Trigger synchronization with Firestore after insert
-//        medicationRepository.uploadLocalChangesToFirestore();
     }
 
     public void update(Medication medication) {

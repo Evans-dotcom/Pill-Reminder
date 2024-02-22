@@ -2,6 +2,7 @@ package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_MEDICATIONS;
 import static com.evans.pillreminder.helpers.Constants.DB_ROOM_DB_NAME;
+import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.content.Context;
 import android.util.Log;
@@ -19,7 +20,6 @@ import com.google.firebase.firestore.MemoryCacheSettings;
 import com.google.firebase.firestore.PersistentCacheSettings;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -103,11 +103,13 @@ public abstract class MedicationDatabase extends RoomDatabase {
 
     // Method to upload local changes to Firestore
     public void uploadLocalChangesToFirestore() {
-        List<Medication> localChanges = medicationDAO().getUnsyncedMedications(); // Implement this method in your DAO
+        List<Medication> localChanges = medicationDAO().getUnsyncedMedications();// Implement this method in your DAO
 
-        for (Medication medication : localChanges) {
+        if (localChanges == null) return;
+/*
+        for (Medication medication : localChanges)) {
             // Convert Medication object to a Map for Firestore
-            Map<String, Object> medicationData = medication.toMap();
+//            Map<String, Object> medicationData = medication.toMap();
 
             // Upload changes to Firestore
             getMedicationsCollection()
@@ -122,7 +124,8 @@ public abstract class MedicationDatabase extends RoomDatabase {
                         // Handle upload failure
                         Log.e("FirestoreUpload", "Error uploading medication data: " + e.getMessage());
                     });
-        }
+        }*/
+        Log.i(MY_TAG, "Local changes uploaded to Firestore");
     }
 
     // Ensure proper cleanup of Firestore resources when the database is closed
