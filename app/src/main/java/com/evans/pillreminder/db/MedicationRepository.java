@@ -25,16 +25,17 @@ public class MedicationRepository {
     private LiveData<List<Medication>> allMedications;
     private CollectionReference medicationsCollection;
     private FirebaseFirestore firestore;
+    private volatile boolean updating = false;
+
+//    public LiveData<List<Medication>> getLocalChanges() {
+//        return localChanges;
+//    }
 
     MedicationRepository(Application application) {
         MedicationDatabase medDB = MedicationDatabase.getInstance(application);
         medicationDAO = medDB.medicationDAO();
         allMedications = medicationDAO.getAllMedications();
     }
-
-//    public LiveData<List<Medication>> getLocalChanges() {
-//        return localChanges;
-//    }
 
     private CollectionReference getMedicationsCollection() {
         if (medicationsCollection == null) {
@@ -63,14 +64,28 @@ public class MedicationRepository {
         medication.setSynced(false);
         new InsertAsyncTask(medicationDAO).execute(medication);
         // Trigger synchronization with Firestore after local insert
-        uploadLocalChangesToFirestore();
+
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
+    }
+
+    public boolean isUpdating() {
+        return updating;
+    }
+
+    public void setUpdating(boolean updating) {
+        this.updating = updating;
     }
 
     public void update(Medication medication) {
         // Update sync status to false before updating the record
         medication.setSynced(false);
         new UpdateAsyncTask(medicationDAO).execute(medication);
-        uploadLocalChangesToFirestore();
+
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
     }
 
     public void delete(Medication medication) {
@@ -79,37 +94,14 @@ public class MedicationRepository {
         new DeleteAsyncTask(medicationDAO).execute(medication);
 
         // Trigger synchronization with Firestore after local delete
-        uploadLocalChangesToFirestore();
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
     }
 
     // Method to upload local changes to Firestore
     private void uploadLocalChangesToFirestore() {
-        // Retrieve unsynced medications from local Room database
-//        LiveData<List<Medication>> localChanges = medicationDAO.getUnsyncedMedications();
-//        Log.i(MY_TAG, "Local Changes: " + localChanges.getValue() + " INITIALIZED: " + localChanges.isInitialized());
-        // TODO: For this to work, update the sync status of each medication after successful db operation
-//        if (localChanges.getValue() == null) return;
-        // Upload local changes to Firestore
-        // Implement this logic similar to MedicationDatabase.uploadLocalChangesToFirestore()
-//        for (Medication medication : localChanges.getValue()) {
-        // Convert Medication object to a Map for Firestore
-//            Map<String, Object> medicationData = medication.toMap();
-
-        // Upload changes to Firestore
-//            getMedicationsCollection()
-//                    .document(medication.getDocumentId())
-//                    .set(medicationData)
-//                    .addOnSuccessListener(aVoid -> {
-        // Update sync status in Room database
-//                        medication.setSynced(true);
-//                        databaseWriteExecutor.execute(() -> medicationDAO.insertOrUpdate(medication));
-//                    })
-//                    .addOnFailureListener(e -> {
-        // Handle upload failure
-//                        Log.e("FirestoreUpload", "Error uploading medication data: " + e.getMessage());
-//                    });
-//        }
-//        Log.i(MY_TAG, "Local changes uploaded to Firestore");
+        setUpdating(true);
         UploadUnsyncData.OnTaskCompleteListener<List<Medication>> listener = new UploadUnsyncData.OnTaskCompleteListener<List<Medication>>() {
             @Override
             public void onTaskComplete(List<Medication> result) {
@@ -131,7 +123,9 @@ public class MedicationRepository {
 
         new DeleteAllAsyncTask(medicationDAO).execute();
         // Trigger synchronization with Firestore after local delete // TODO: Add isDeleted fields in Firebase
-        uploadLocalChangesToFirestore();
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
     }
 
     private static class InsertAsyncTask extends AsyncTask<Medication, Void, Void> {
@@ -141,24 +135,6 @@ public class MedicationRepository {
             this.medicationDAO = medicationDAO;
         }
 
-        /**
-         * Override this method to perform a computation on a background thread. The
-         * specified parameters are the parameters passed to {@link #execute}
-         * by the caller of this task.
-         * <p>
-         * This will normally run on a background thread. But to better
-         * support testing frameworks, it is recommended that this also tolerates
-         * direct execution on the foreground thread, as part of the {@link #execute} call.
-         * <p>
-         * This method can call {@link #publishProgress} to publish updates
-         * on the UI thread.
-         *
-         * @param medications The parameters of the task.
-         * @return A result, defined by the subclass of this task.
-         * @see #onPreExecute()
-         * @see #onPostExecute
-         * @see #publishProgress
-         */
         @Override
         protected Void doInBackground(Medication... medications) {
             medicationDAO.insert(medications[0]);
@@ -174,24 +150,6 @@ public class MedicationRepository {
             this.medicationDAO = medicationDAO;
         }
 
-        /**
-         * Override this method to perform a computation on a background thread. The
-         * specified parameters are the parameters passed to {@link #execute}
-         * by the caller of this task.
-         * <p>
-         * This will normally run on a background thread. But to better
-         * support testing frameworks, it is recommended that this also tolerates
-         * direct execution on the foreground thread, as part of the {@link #execute} call.
-         * <p>
-         * This method can call {@link #publishProgress} to publish updates
-         * on the UI thread.
-         *
-         * @param medications The parameters of the task.
-         * @return A result, defined by the subclass of this task.
-         * @see #onPreExecute()
-         * @see #onPostExecute
-         * @see #publishProgress
-         */
         @Override
         protected Void doInBackground(Medication... medications) {
             medicationDAO.update(medications[0]);
@@ -263,9 +221,11 @@ public class MedicationRepository {
 //            super.onPostExecute(medications);
             for (Medication medication : medications) {
                 DocumentReference mDocument = getMedicationsCollection().document();
+                Log.w(MY_TAG, "success:about upload: " + mDocument.getPath());
 
                 mDocument.set(medication.toMap())
                         .addOnSuccessListener(aVoid -> {
+                            Log.w(MY_TAG, "success: " + mDocument.getId());
                             // Update sync status in Room database
                             medication.setDocumentId(mDocument.getId());
                             medication.setSynced(true);

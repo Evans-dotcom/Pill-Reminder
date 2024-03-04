@@ -2,6 +2,8 @@ package com.evans.pillreminder.adapters;
 
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,9 +36,24 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
 
     @Override
     public void onBindViewHolder(@NonNull MedicationViewHolder holder, int position) {
+
         holder.tvMedicationName.setText(medications.get(position).getMedicationName());
         holder.tvMedicationDosage.setText(medications.get(position).getMedicationDosage());
-        Log.i(MY_TAG, "Database Data: " + medications.get(position));
+        String pillForm = medications.get(position).getMedicationForm();
+        int image = R.drawable.baseline_water_drop_24;
+        if (pillForm.equalsIgnoreCase("capsule")) {
+            image = R.drawable.baseline_water_drop_24;
+        } else if (pillForm.equalsIgnoreCase("tablet")) {
+            image = R.drawable.baseline_add_24;
+        } else if (pillForm.equalsIgnoreCase("drops")) {
+            image = R.drawable.baseline_chat_bubble_24;
+        } else if (pillForm.equalsIgnoreCase("inhalers")) {
+            image = R.drawable.baseline_bar_chart_24;
+        } else if (pillForm.equalsIgnoreCase("suppositories")) {
+            image = R.drawable.baseline_warning_amber_24;
+        }
+        holder.pillImage.setImageResource(image);
+        Log.i(MY_TAG, "Database Data: " + medications);
     }
 
     @Override
@@ -64,6 +82,7 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
 
     protected static class MedicationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvMedicationName, tvMedicationDosage;
+        AppCompatImageView pillImage;
         Button btnNotTaken, btnTaken;
 
         public MedicationViewHolder(@NonNull View itemView) {
@@ -72,6 +91,7 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
             tvMedicationDosage = itemView.findViewById(R.id.medCardPillDosage);
             btnNotTaken = itemView.findViewById(R.id.btnCardMedicationMissed);
             btnTaken = itemView.findViewById(R.id.btnCardMedicationTaken);
+            pillImage = itemView.findViewById(R.id.medCardPillImg);
 
             btnNotTaken.setOnClickListener(this);
             btnTaken.setOnClickListener(this);

@@ -5,15 +5,19 @@
     android:id="@+id/cardScheduledTime"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/transparent"
+    app:cardUseCompatPadding="true"
     tools:ignore="HardcodedText">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/transparent">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:background="@drawable/rounded_end"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -41,15 +45,17 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/customSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:trackTint="@color/colorPurple"
+                android:layout_marginEnd="10dp"
                 android:thumb="@drawable/custom_switch_thumb"
-                app:track="@drawable/switch_track_custom" />
+                app:track="@drawable/switch_track_custom"
+                app:trackTint="@color/colorPurple" />
         </LinearLayout>
     </RelativeLayout>
 
