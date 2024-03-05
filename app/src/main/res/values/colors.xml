@@ -13,4 +13,6 @@
     <color name="primaryBlue">#0050DF</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="black_white">#000000</color>
 </resources>

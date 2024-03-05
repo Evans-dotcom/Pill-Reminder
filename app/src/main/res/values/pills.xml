@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="medication_form">
+    <string-array name="medication_forms">
         <item>Capsules</item>
-        <item>Tablet</item>
+        <item>Tablets</item>
         <item>Drops</item>
         <item>Inhalers</item>
-        <item>Injection</item>
         <item>Suppositories</item>
     </string-array>
 

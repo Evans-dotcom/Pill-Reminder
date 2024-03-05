@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
             editTextAddMedNote, editTextAddMedFor;
     AppCompatSpinner spinnerMedicationForm, spinnerMedPeriod;
     MedicationViewModel medicationViewModel;
+    Button btnCameraAddPrescription;
 
     public AddMedicationFragment() {
         // Required empty public constructor
@@ -76,6 +78,26 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
         editTextAddMedNote = view.findViewById(R.id.tiLayoutAddMedNote);
         tvAddMedDate = view.findViewById(R.id.tvAddMedDateIssued);
         editTextAddMedFor = view.findViewById(R.id.tiEditTextMedFor);
+        btnCameraAddPrescription = view.findViewById(R.id.btnCameraAddPrescription);
+
+        btnCameraAddPrescription.setOnClickListener(this);
+
+        spinnerMedicationForm.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String[] medicationForms = getResources().getStringArray(R.array.medication_forms);
+                if (medicationForms[position].equalsIgnoreCase("suppositories")) {
+                    Objects.requireNonNull(editTextAddMedDose.getEditText()).setHint(editTextAddMedDose.getEditText().getHint().toString() + " (ml)");
+                } else {
+                    Objects.requireNonNull(editTextAddMedDose.getEditText()).setHint(editTextAddMedDose.getEditText().getHint().toString() + " (Number)");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
@@ -150,6 +172,9 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
         } else if (v.getId() == R.id.btnAddMedDiscard) {
             clearViews();
             // reset spinner to point at element 0
+        }else if(v.getId() == R.id.btnCameraAddPrescription){
+            Toast.makeText(v.getContext(), "Opening Camera...", Toast.LENGTH_SHORT).show();
+
         }
     }
 
