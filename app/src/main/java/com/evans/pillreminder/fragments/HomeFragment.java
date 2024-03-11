@@ -40,6 +40,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
     TextView selectedDate;
     AppCompatImageButton btnPrevDate, btnNextDate;
     private MedicationViewModel medicationViewModel;
+    private Calendar today;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -93,7 +94,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         });
         // end view model
 
-        Calendar today = Calendar.getInstance();
+        today = Calendar.getInstance();
         selectedDate.setText(today.get(Calendar.DAY_OF_MONTH) + " " +
                 MONTHS[today.get(Calendar.MONTH)]
                 + " " + today.get(Calendar.YEAR));
@@ -135,7 +136,23 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
                     today.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         } else if (v.getId() == R.id.homeFragCalendarPrev) {
+            int yesterdayDate = today.get(Calendar.DAY_OF_MONTH) - 1;
+            Log.i(MY_TAG, "DATE: " + yesterdayDate);
+            today.set(today.get(Calendar.YEAR), today.get(Calendar.MONTH), yesterdayDate);
+
+            String date = today.get(Calendar.DAY_OF_MONTH) + " " + MONTHS[today.get(Calendar.MONTH)]
+                    + " " + today.get(Calendar.YEAR);
+
+            selectedDate.setText(date);
         } else if (v.getId() == R.id.homeFragCalendarNext) {
+            int yesterdayDate = today.get(Calendar.DAY_OF_MONTH) + 1;
+
+            today.set(today.get(Calendar.YEAR), today.get(Calendar.MONTH), yesterdayDate);
+
+            String date = today.get(Calendar.DAY_OF_MONTH) + " " + MONTHS[today.get(Calendar.MONTH)]
+                    + " " + today.get(Calendar.YEAR);
+
+            selectedDate.setText(date);
         }
     }
 

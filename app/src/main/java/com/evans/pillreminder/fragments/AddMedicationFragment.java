@@ -4,6 +4,7 @@ import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,13 +17,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.evans.pillreminder.R;
+import com.evans.pillreminder.ScannerActivity;
 import com.evans.pillreminder.db.Medication;
 import com.evans.pillreminder.db.MedicationViewModel;
 import com.google.android.material.textfield.TextInputLayout;
@@ -122,6 +128,7 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
      *
      * @param v The view that was clicked.
      */
+    @OptIn(markerClass = ExperimentalGetImage.class)
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.tvAddMedDateIssued) {
@@ -144,7 +151,6 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
                     now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
         } else if (v.getId() == R.id.btnAddMedSave) {
-            Toast.makeText(v.getContext(), "Button Save Clicked", Toast.LENGTH_SHORT).show();
             // verify the fields
             if (!verifyInputs(/*send the focus to the view that has not been filled*/)) {
                 Toast.makeText(v.getContext(), "Error in some fields", Toast.LENGTH_SHORT).show();
@@ -166,16 +172,23 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
             medicationViewModel.insert(medication);
             LiveData<List<Medication>> allMedications = medicationViewModel.getAllMedications();
             Log.w(MY_TAG, "All: " + allMedications.getValue());
-            Toast.makeText(v.getContext(), "Data Saved", Toast.LENGTH_SHORT).show();
             // if connected to internet, upload to the server (FIREBASE)
-
+            loadFragment(new HomeFragment());
         } else if (v.getId() == R.id.btnAddMedDiscard) {
             clearViews();
             // reset spinner to point at element 0
-        }else if(v.getId() == R.id.btnCameraAddPrescription){
+        } else if (v.getId() == R.id.btnCameraAddPrescription) {
             Toast.makeText(v.getContext(), "Opening Camera...", Toast.LENGTH_SHORT).show();
-
+            Intent scanIntent = new Intent(this.getActivity(), ScannerActivity.class);
+            startActivity(scanIntent);
         }
+    }
+
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = this.requireActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.mainFrameLayout, fragment);
+        fragmentTransaction.commit();
     }
 
     private void clearViews() {

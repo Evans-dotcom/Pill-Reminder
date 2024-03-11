@@ -40,10 +40,10 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
         holder.tvMedicationName.setText(medications.get(position).getMedicationName());
         holder.tvMedicationDosage.setText(medications.get(position).getMedicationDosage());
         String pillForm = medications.get(position).getMedicationForm();
-        int image = R.drawable.baseline_water_drop_24;
-        if (pillForm.equalsIgnoreCase("capsule")) {
-            image = R.drawable.baseline_water_drop_24;
-        } else if (pillForm.equalsIgnoreCase("tablet")) {
+        int image = 0;
+        if (pillForm.equalsIgnoreCase("capsules")) {
+            image = R.drawable.capsule_right_svg;
+        } else if (pillForm.equalsIgnoreCase("tablets")) {
             image = R.drawable.baseline_add_24;
         } else if (pillForm.equalsIgnoreCase("drops")) {
             image = R.drawable.baseline_chat_bubble_24;
