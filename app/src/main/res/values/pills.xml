@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="genders">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="medication_forms">
         <item>Capsules</item>
         <item>Tablets</item>
@@ -14,4 +20,5 @@
         <item>Month(s)</item>
         <item>Year(s)</item>
     </string-array>
+    <string name="default_web_client_id">838182118791-0hel8u9lv7ukmsfirajcl02go71ciq9e.apps.googleusercontent.com</string>
 </resources>
