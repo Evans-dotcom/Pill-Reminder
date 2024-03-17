@@ -7,33 +7,41 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
     TextView registerLink, forgotPasswdLink;
     Button btnLogin;
-    ImageView loginWithGoogle;
+    SignInButton loginWithGoogle;
     TextInputLayout emailLayout, passwordLayout;
     private BeginSignInRequest signInRequest;
     private boolean showOneTapUI = true;
     private FirebaseAuth mAuth;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onStart() {
@@ -64,11 +72,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         emailLayout = findViewById(R.id.editLayoutLoginEmail);
         passwordLayout = findViewById(R.id.editLayoutLoginPassword);
 
-        loginWithGoogle = findViewById(R.id.socialLoginGoogle);
+        loginWithGoogle = findViewById(R.id.btnGoogleSignin);
 
         btnLogin.setOnClickListener(this);
         registerLink.setOnClickListener(this);
         forgotPasswdLink.setOnClickListener(this);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         loginWithGoogle.setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -89,7 +110,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         switch (requestCode) {
             case REQ_ONE_TAP:
-//                try {
+                GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+                handleSignInResult(result);
 //                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
 //                    String idToken = credential.getGoogleIdToken();
 //                    if (idToken != null) {
@@ -97,10 +119,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                        // with Firebase.
 //                        Log.d(MY_TAG, "Got ID token.");
 //                    }
-//                } catch (ApiException e) {
-                // ...
-//                }
-//                break;
+                break;
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            Log.d(MY_TAG, "handleSignInResult: " + result.getStatus() + " " + Objects.requireNonNull(acct).getDisplayName());
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            startActivity(new Intent(this, MainActivity.class));
+            this.finish();
         }
     }
 
@@ -131,8 +161,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // TODO: display logins or network error
                         }
                     });
-        } else if (v.getId() == R.id.socialLoginGoogle) {
+        } else if (v.getId() == R.id.btnGoogleSignin) {
             // TODO: do sign-in using google
+//            signIn();
         }
+    }
+
+    private void signIn() {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, REQ_ONE_TAP);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
