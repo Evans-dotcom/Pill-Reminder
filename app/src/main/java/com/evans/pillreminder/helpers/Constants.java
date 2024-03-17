@@ -18,9 +18,5 @@ public class Constants {
     public static final String DB_COLUMN_MEDICATION_NOTE = "med_note";
     public static final String DB_COLUMN_MEDICATION_DOSAGE_FOR = "med_duration"; // prescription duration
     public static final String DB_FIRESTORE_COLLECTIONS_MEDICATIONS = "/medications";
-//    public static final String DB_COLUMN_MEDICATION_
-//    public static final String DB_COLUMN_MEDICATION_
-//    public static final String DB_COLUMN_MEDICATION_
-//    public static final String DB_COLUMN_MEDICATION_
-//    public static final String DB_COLUMN_MEDICATION_
+    public static final String DB_FIRESTORE_COLLECTIONS_USERS = "/users";
 }

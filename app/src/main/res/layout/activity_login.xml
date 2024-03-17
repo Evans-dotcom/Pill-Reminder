@@ -26,82 +26,13 @@
         <!--            android:fontFamily="@font/bellione_font_regular"-->
         <!--            android:text="Login"-->
         <!--            android:textSize="38sp" />-->
-        <LinearLayout
-            android:id="@+id/socialLoginsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Sign in with"
-                android:textSize="28sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/socialLoginGoogle"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="20dp"
-                    android:src="@drawable/google_color" />
-
-                <ImageView
-                    android:id="@+id/socialLoginFacebook"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="20dp"
-                    android:src="@drawable/facebook_logo" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/lineSeparator"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/socialLoginsLayout"
-            android:layout_marginTop="50dp">
-
-            <TextView
-                android:id="@+id/tvText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="or"
-                android:textSize="28sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/tvText"
-                android:background="@color/black_white" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/tvText"
-                android:background="@color/black_white" />
-
-        </RelativeLayout>
 
 
         <LinearLayout
             android:id="@+id/loginCredentialsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lineSeparator"
-            android:layout_marginTop="50dp"
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -145,11 +76,86 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/lineSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_below="@id/loginCredentialsLayout">
+
+            <TextView
+                android:id="@+id/tvText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="or"
+                android:textSize="28sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/tvText"
+                android:background="@color/black_white" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/tvText"
+                android:background="@color/black_white" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/socialLoginsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lineSeparator"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Sign in with"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/socialLoginGoogle"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_height="80dp"-->
+                <!--                    android:layout_marginTop="20dp"-->
+                <!--                    android:src="@drawable/google_color" />-->
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/btnGoogleSignin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--                <ImageView-->
+                <!--                    android:id="@+id/socialLoginFacebook"-->
+                <!--                    android:layout_width="80dp"-->
+                <!--                    android:layout_height="80dp"-->
+                <!--                    android:layout_marginTop="20dp"-->
+                <!--                    android:src="@drawable/facebook_logo" />-->
+            </LinearLayout>
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/loginCredentialsLayout"
-            android:layout_marginTop="100dp"
+            android:layout_below="@id/socialLoginsLayout"
+            android:layout_marginTop="50dp"
             android:orientation="vertical">
 
             <View

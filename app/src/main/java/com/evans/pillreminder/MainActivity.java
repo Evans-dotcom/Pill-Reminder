@@ -25,13 +25,14 @@ import com.evans.pillreminder.fragments.ContactUsFragment;
 import com.evans.pillreminder.fragments.HistoryFragment;
 import com.evans.pillreminder.fragments.HomeFragment;
 import com.evans.pillreminder.fragments.NotificationsFragment;
+import com.evans.pillreminder.fragments.ProfileFragment;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    FrameLayout mainFrameLayout;
     public MainActivity activity;
-    AppCompatImageButton imgBtnHome, imgBtnNotification, imgBtnAddMed, imgBtnHistory, imgBtnContactUs;
+    FrameLayout mainFrameLayout;
+    AppCompatImageButton imgBtnHome, imgBtnNotification, imgBtnAddMed, imgBtnHistory, imgBtnContactUs, imgBtnProfile;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -49,12 +50,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imgBtnAddMed = findViewById(R.id.mainBNavAddMedication);
         imgBtnHistory = findViewById(R.id.mainBNavHistory);
         imgBtnContactUs = findViewById(R.id.mainBNavContactUs);
+        imgBtnProfile = findViewById(R.id.mainBNavProfile);
 
         imgBtnHome.setOnClickListener(this);
         imgBtnNotification.setOnClickListener(this);
         imgBtnAddMed.setOnClickListener(this);
         imgBtnHistory.setOnClickListener(this);
         imgBtnContactUs.setOnClickListener(this);
+        imgBtnProfile.setOnClickListener(this);
         // TODO: Add fragment to mainFrameLayout
         loadFragment(new HomeFragment());
     }
@@ -79,13 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.mainBNavHome) {
-            Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
             loadFragment(new HomeFragment());
         } else if (v.getId() == R.id.mainBNavNotification) {
-            Toast.makeText(this, "Notification", Toast.LENGTH_SHORT).show();
             loadFragment(new NotificationsFragment());
         } else if (v.getId() == R.id.mainBNavAddMedication) {
-            Toast.makeText(this, "Add Med", Toast.LENGTH_SHORT).show();
             loadFragment(new AddMedicationFragment());
         } else if (v.getId() == R.id.mainBNavHistory) {
             MedicationViewModel medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             medicationViewModel.getAllMedications().observe(this, new Observer<List<Medication>>() {
                 @Override
                 public void onChanged(List<Medication> medications) {
-                    Toast.makeText(v.getContext(), "DataUpdated: " + medications.size(), Toast.LENGTH_SHORT).show();
+                    //
                 }
             });
 
@@ -103,11 +103,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 Log.e(MY_TAG, "ERR: NULL VALUE REF");
             }
-            Toast.makeText(this, "History", Toast.LENGTH_SHORT).show();
             loadFragment(new HistoryFragment());
         } else if (v.getId() == R.id.mainBNavContactUs) {
-            Toast.makeText(this, "Contact Us", Toast.LENGTH_SHORT).show();
             loadFragment(new ContactUsFragment());
+        } else if (v.getId() == R.id.mainBNavProfile) {
+            loadFragment(new ProfileFragment());
         }
     }
 }
