@@ -87,7 +87,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         .addOnCompleteListener(task1 -> {
                                             if (task1.isSuccessful()) {
                                                 Log.i(MY_TAG, "User logged in successfully");
-                                                DocumentReference userDocument = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS).document();
+                                                DocumentReference userDocument = firestore.collection(
+                                                        DB_FIRESTORE_COLLECTIONS_USERS)
+                                                        .document(Objects.requireNonNull(task1.getResult().getUser()).getUid());
+
+                                                Log.i(MY_TAG, "UID: " + Objects.requireNonNull(task1.getResult().getUser()).getUid());
 
                                                 Map<String, Object> user = Map.of(
                                                         "firstName", Objects.requireNonNull(firstName.getEditText()).getText().toString(),
@@ -99,19 +103,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                                 userDocument.set(user).addOnSuccessListener(aVoid -> {
                                                     Log.i(MY_TAG, "User data saved successfully");
-//                                                    Intent intent = new Intent(v.getContext(), MainActivity.class);
-//                                                    startActivity(intent);
-//                                                    this.finish();
+                                                    Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification();
+
+                                                    Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                    startActivity(intent);
+                                                    this.finish();
                                                 }).addOnFailureListener(e -> Log.e(MY_TAG, "User data save failed: " + e.getMessage()));
 
                                             } else {
                                                 Log.e(MY_TAG, "User login failed: " + Objects.requireNonNull(task1.getException()).getMessage());
                                             }
                                         });
-                                Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification();
-//                                Intent intent = new Intent(v.getContext(), MainActivity.class);
-//                                startActivity(intent);
-//                                this.finish();
                             } else {
                                 Log.e(MY_TAG, "User registration failed: " + Objects.requireNonNull(task.getException()).getMessage());
                             }

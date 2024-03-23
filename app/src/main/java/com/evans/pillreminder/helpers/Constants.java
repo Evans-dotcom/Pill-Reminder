@@ -19,4 +19,8 @@ public class Constants {
     public static final String DB_COLUMN_MEDICATION_DOSAGE_FOR = "med_duration"; // prescription duration
     public static final String DB_FIRESTORE_COLLECTIONS_MEDICATIONS = "/medications";
     public static final String DB_FIRESTORE_COLLECTIONS_USERS = "/users";
+
+    // Notifications
+    public final static String CHANNEL_DOCTOR_NOTIFICATION_ID = "doctor_notification";
+    public final static int NOTIFICATION_CHANNEL_DOCTOR_ID = 1;
 }

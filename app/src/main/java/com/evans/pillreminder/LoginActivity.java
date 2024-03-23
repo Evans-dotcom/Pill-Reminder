@@ -84,7 +84,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .build();
 
 
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -152,6 +151,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(MY_TAG, "signInWithEmail: " + task.getResult().toString());
                             FirebaseUser user = mAuth.getCurrentUser();
+                            String uid = Objects.requireNonNull(user).getUid();
+                            Log.i(MY_TAG, "UID: " + uid);
                             Intent intent = new Intent(v.getContext(), MainActivity.class);
                             startActivity(intent);
                             this.finish();
