@@ -5,40 +5,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.evans.pillreminder.R;
+import com.evans.pillreminder.adapters.ContactUsPagerAdapter;
+import com.google.android.material.tabs.TabItem;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ContactUsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ContactUsFragment extends Fragment {
+    String[] tabTitles = {"Appointments", "Messages"};
+    ViewPager2 viewPager;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    TabLayout tabLayoutHeader;
+    private ContactUsPagerAdapter pagerAdapter;
 
     public ContactUsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ContactUsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ContactUsFragment newInstance(String param1, String param2) {
         ContactUsFragment fragment = new ContactUsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,4 +47,21 @@ public class ContactUsFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_contact_us, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        tabLayoutHeader = view.findViewById(R.id.tabLayoutHeader);
+
+        viewPager = view.findViewById(R.id.contactViewPager);
+        pagerAdapter = new ContactUsPagerAdapter(this.requireActivity().getSupportFragmentManager(), this.requireActivity().getLifecycle());
+        pagerAdapter.addFragment(new AppointmentFragment());
+        pagerAdapter.addFragment(new MessagesFragment());
+
+        viewPager.setAdapter(pagerAdapter);
+
+        new TabLayoutMediator(tabLayoutHeader, viewPager, (tab, i) -> tab.setText(tabTitles[i])).attach();
+    }
+
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/mainFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/mainBottomNavigation">
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/mainBottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@color/backgroundTint"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/mainBNavHome"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_home_24"
+            android:tooltipText="Home" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/mainBNavNotification"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_notifications_24"
+            android:tooltipText="Notifications" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/mainBNavProfile"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_tag_faces_24"
+            android:tooltipText="Profile" />
+    </LinearLayout>
+</RelativeLayout>

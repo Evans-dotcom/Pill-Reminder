@@ -1,5 +1,6 @@
 package com.evans.pillreminder;
 
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.annotation.SuppressLint;
@@ -7,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -26,47 +26,72 @@ import com.evans.pillreminder.fragments.HistoryFragment;
 import com.evans.pillreminder.fragments.HomeFragment;
 import com.evans.pillreminder.fragments.NotificationsFragment;
 import com.evans.pillreminder.fragments.ProfileFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     public MainActivity activity;
     FrameLayout mainFrameLayout;
     AppCompatImageButton imgBtnHome, imgBtnNotification, imgBtnAddMed, imgBtnHistory, imgBtnContactUs, imgBtnProfile;
+    FirebaseUser user;
+    FirebaseAuth auth;
+    FirebaseFirestore firestore;
 
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         activity = this;
 
         getWindow().setStatusBarColor(R.color.colorPurple);
 
-        mainFrameLayout = findViewById(R.id.mainFrameLayout);
+        firestore = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
 
-        imgBtnHome = findViewById(R.id.mainBNavHome);
-        imgBtnNotification = findViewById(R.id.mainBNavNotification);
-        imgBtnAddMed = findViewById(R.id.mainBNavAddMedication);
-        imgBtnHistory = findViewById(R.id.mainBNavHistory);
-        imgBtnContactUs = findViewById(R.id.mainBNavContactUs);
-        imgBtnProfile = findViewById(R.id.mainBNavProfile);
+        DocumentReference document = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS).document(Objects.requireNonNull(user).getUid());
 
-        imgBtnHome.setOnClickListener(this);
-        imgBtnNotification.setOnClickListener(this);
-        imgBtnAddMed.setOnClickListener(this);
-        imgBtnHistory.setOnClickListener(this);
-        imgBtnContactUs.setOnClickListener(this);
-        imgBtnProfile.setOnClickListener(this);
-        // TODO: Add fragment to mainFrameLayout
-        loadFragment(new HomeFragment());
+        document.get().addOnCompleteListener((task -> {
+            if (task.getResult().get("doctor") != null) {
+                setContentView(R.layout.activity_main_doctor);
+
+                imgBtnHome = findViewById(R.id.mainBNavHome);
+                imgBtnNotification = findViewById(R.id.mainBNavNotification);
+                imgBtnProfile = findViewById(R.id.mainBNavProfile);
+
+                imgBtnHome.setOnClickListener(this);
+                imgBtnNotification.setOnClickListener(this);
+                imgBtnProfile.setOnClickListener(this);
+
+                loadFragment(new DoctorHomeFragment());
+            } else {
+                setContentView(R.layout.activity_main);
+                mainFrameLayout = findViewById(R.id.mainFrameLayout);
+
+                imgBtnHome = findViewById(R.id.mainBNavHome);
+                imgBtnNotification = findViewById(R.id.mainBNavNotification);
+                imgBtnAddMed = findViewById(R.id.mainBNavAddMedication);
+                imgBtnHistory = findViewById(R.id.mainBNavHistory);
+                imgBtnContactUs = findViewById(R.id.mainBNavContactUs);
+                imgBtnProfile = findViewById(R.id.mainBNavProfile);
+
+                imgBtnHome.setOnClickListener(this);
+                imgBtnNotification.setOnClickListener(this);
+                imgBtnAddMed.setOnClickListener(this);
+                imgBtnHistory.setOnClickListener(this);
+                imgBtnContactUs.setOnClickListener(this);
+                imgBtnProfile.setOnClickListener(this);
+
+                loadFragment(new HomeFragment());
+            }
+        }));
     }
 
-    /**
-     * Load the fragments to the frame layout
-     *
-     * @param fragment The fragment that you want to load to the view
-     */
     private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -74,11 +99,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTransaction.commit();
     }
 
-    /**
-     * Called when a view has been clicked.
-     *
-     * @param v The view that was clicked.
-     */
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.mainBNavHome) {
