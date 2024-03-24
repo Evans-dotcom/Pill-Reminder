@@ -15,4 +15,5 @@
     <color name="green">#00FF00</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="black_white">#000000</color>
+    <color name="dark_gray">#5C5C5C</color>
 </resources>

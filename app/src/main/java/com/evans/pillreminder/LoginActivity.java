@@ -1,5 +1,6 @@
 package com.evans.pillreminder;
 
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.content.Intent;
@@ -29,7 +30,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -126,10 +130,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            Log.d(MY_TAG, "handleSignInResult: " + result.getStatus() + " " + Objects.requireNonNull(acct).getDisplayName());
             FirebaseAuth auth = FirebaseAuth.getInstance();
-            startActivity(new Intent(this, MainActivity.class));
-            this.finish();
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+            // TODO: store user email, email as password
+            auth.createUserWithEmailAndPassword(Objects.requireNonNull(Objects.requireNonNull(acct).getEmail()), acct.getEmail()).addOnSuccessListener((task) -> {
+                DocumentReference document = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS)
+                        .document(Objects.requireNonNull(task.getUser()).getUid());
+
+                Map<String, Object> user = Map.of(
+                        "firstName", Objects.requireNonNull(acct.getGivenName()),
+                        "lastName", Objects.requireNonNull(acct.getFamilyName()),
+                        "email", Objects.requireNonNull(acct.getEmail()),
+                        "dp", Objects.requireNonNull(acct.getPhotoUrl())
+                );
+
+                document.set(user);
+
+                Log.d(MY_TAG, "handleSignInResult: " + result.getStatus() + " " + Objects.requireNonNull(acct).getDisplayName());
+                startActivity(new Intent(this, MainActivity.class));
+                this.finish();
+            });
         }
     }
 
@@ -164,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     });
         } else if (v.getId() == R.id.btnGoogleSignin) {
             // TODO: do sign-in using google
-//            signIn();
+            signIn();
         }
     }
 
