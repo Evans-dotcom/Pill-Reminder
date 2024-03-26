@@ -2,8 +2,6 @@ package com.evans.pillreminder.adapters;
 
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,13 +42,13 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
         if (pillForm.equalsIgnoreCase("capsules")) {
             image = R.drawable.capsule_right_svg;
         } else if (pillForm.equalsIgnoreCase("tablets")) {
-            image = R.drawable.baseline_add_24;
+            image = R.drawable.tablets_svg;
         } else if (pillForm.equalsIgnoreCase("drops")) {
-            image = R.drawable.baseline_chat_bubble_24;
+            image = R.drawable.drops_of_medicine_svg;
         } else if (pillForm.equalsIgnoreCase("inhalers")) {
-            image = R.drawable.baseline_bar_chart_24;
+            image = R.drawable.inhaler_asthma_svg;
         } else if (pillForm.equalsIgnoreCase("suppositories")) {
-            image = R.drawable.baseline_warning_amber_24;
+            image = R.drawable.suppository_capsule_svg;
         }
         holder.pillImage.setImageResource(image);
         Log.i(MY_TAG, "Database Data: " + medications);

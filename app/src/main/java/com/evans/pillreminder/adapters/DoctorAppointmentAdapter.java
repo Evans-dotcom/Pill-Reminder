@@ -24,16 +24,16 @@ public class DoctorAppointmentAdapter extends RecyclerView.Adapter<DoctorAppoint
         appointments.add(new Appointment("Evans", "Langat", "Some mall description",
                 "2023-12-20", "13:45:20"));
 
-        appointments.add(new Appointment("Brian", "Langat", "Some mall description",
+        appointments.add(new Appointment("Brian", "Koech", "Some mall description",
                 "2023-12-20", "13:45:20"));
 
-        appointments.add(new Appointment("Jane", "Langat", "Some mall description",
+        appointments.add(new Appointment("Jane", "Soih", "Some mall description",
                 "2023-12-20", "13:45:20"));
 
-        appointments.add(new Appointment("Joe", "Langat", "Some mall description",
+        appointments.add(new Appointment("Joe", "Peters", "Some mall description",
                 "2023-12-20", "13:45:20"));
 
-        appointments.add(new Appointment("Chris", "Langat", "Some mall description",
+        appointments.add(new Appointment("Chris", "Khimani", "Some mall description",
                 "2023-12-20", "13:45:20"));
     }
 

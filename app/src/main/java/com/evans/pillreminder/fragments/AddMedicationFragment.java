@@ -105,7 +105,6 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
             }
         });
 
-
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
         medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
             @Override

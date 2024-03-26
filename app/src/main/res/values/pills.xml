@@ -18,7 +18,7 @@
         <item>Day(s)</item>
         <item>Week(s)</item>
         <item>Month(s)</item>
+        RECAPTCHA_API_KEY="your_api_key_here"RECAPTCHA_API_KEY="your_api_key_here"
         <item>Year(s)</item>
     </string-array>
-    <string name="default_web_client_id">838182118791-0hel8u9lv7ukmsfirajcl02go71ciq9e.apps.googleusercontent.com</string>
 </resources>
