@@ -1,7 +1,10 @@
 package com.evans.pillreminder.fragments;
 
+import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.evans.pillreminder.LoginActivity;
 import com.evans.pillreminder.R;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -24,7 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     ImageView profileImage;
     TextInputLayout firstName, lastName, email, username, phoneNumber;
     Button btnLogout, btnUpdate;
@@ -56,6 +63,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+
         context = this.getActivity();
 
         profileImage = view.findViewById(R.id.profileImage);
@@ -84,10 +92,30 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.btnLogout) {
             mAuth.signOut();
+            // TODO: logout user that joined using google
+//            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                    .requestIdToken(getString(R.string.default_web_client_id))
+//                    .requestEmail()
+//                    .build();
+//
+//            GoogleApiClient googleApiClient = new GoogleApiClient.Builder(v.getContext())
+//                    .enableAutoManage(context, this)
+//                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+//                    .build();
+//            Auth.GoogleSignInApi.signOut(googleApiClient).addStatusListener((status) -> {
+//                //
+//                Log.i(MY_TAG, "LogOut Success: " + status + "=> " + status.getStatusMessage());
+//            });
+
             startActivity(new Intent(v.getContext(), LoginActivity.class));
             context.finish();
         } else if (v.getId() == R.id.btnProfileUpdate) {
         } else if (v.getId() == R.id.profileSelectImage) {
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i(MY_TAG, "onConnectionFailed: " + connectionResult);
     }
 }
