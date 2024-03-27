@@ -29,7 +29,7 @@
                         android:id="@+id/profileImage"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:src="@drawable/baseline_tag_faces_24" />
+                        android:src="@drawable/baseline_insert_photo_24" />
 
                     <ImageButton
                         android:id="@+id/profileSelectImage"
