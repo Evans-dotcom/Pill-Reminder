@@ -1,8 +1,11 @@
 package com.evans.pillreminder;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
+import static com.evans.pillreminder.helpers.Constants.FILENAME_USER_DETAILS_JSON;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+import static com.evans.pillreminder.helpers.UtilityFunctions.saveDictionary;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +22,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.evans.pillreminder.db.User;
+import com.evans.pillreminder.db.UserViewModel;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -50,8 +55,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onStart() {
         super.onStart();
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        // TODO: check if the userUID is in the database user table
         if (currentUser != null) {
             // TODO: reload()
         }
@@ -107,6 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .build())
                 .build();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -145,7 +151,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         "dp", Objects.requireNonNull(acct.getPhotoUrl())
                 );
 
-                document.set(user);
+                document.set(user).addOnSuccessListener(aTask -> {
+                    //
+                    saveDictionary(this, user, FILENAME_USER_DETAILS_JSON);
+                });
 
                 Log.d(MY_TAG, "handleSignInResult: " + result.getStatus() + " " + Objects.requireNonNull(acct).getDisplayName());
                 startActivity(new Intent(this, MainActivity.class));
@@ -172,13 +181,38 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(MY_TAG, "signInWithEmail: " + task.getResult().toString());
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                             String uid = Objects.requireNonNull(user).getUid();
-                            Log.i(MY_TAG, "UID: " + uid);
-                            Intent intent = new Intent(v.getContext(), MainActivity.class);
-                            startActivity(intent);
-                            this.finish();
+
+                            DocumentReference mDocument = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS).document(uid);
+                            // store the user in the database
+                            mDocument.get().addOnSuccessListener(snapshot -> {
+                                boolean gender = !Objects.requireNonNull(snapshot.get("genderID")).equals(0);
+                                String firstName = (Objects.requireNonNull(snapshot.get("firstName")).toString());
+                                String lastName = (Objects.requireNonNull(snapshot.get("lastName")).toString());
+                                String phone = (Objects.requireNonNull(snapshot.get("mobileNumber")).toString());
+                                String uEmail = (Objects.requireNonNull(snapshot.get("email")).toString());
+                                String username = (Objects.requireNonNull(snapshot.get("username")).toString());
+                                String imageURL = "";
+
+                                Log.i(MY_TAG, "Data: " + snapshot.getData().toString());
+
+                                User dbUser = new User(firstName, lastName, phone, uEmail, gender, username, imageURL, uid);
+                                UserViewModel userViewModel = new UserViewModel((Application) getApplicationContext());
+                                userViewModel.deleteAny();
+                                userViewModel.insertFirst(dbUser);
+
+                                saveDictionary(this, snapshot.getData(), FILENAME_USER_DETAILS_JSON);
+
+                                Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                startActivity(intent);
+                                this.finish();
+                            });
                             // TODO: redirect to MainActivity
                         } else {
+                            Toast.makeText(this, Objects.requireNonNull(task.getException()).getMessage(),
+                                    Toast.LENGTH_SHORT).show();
                             Log.w(MY_TAG, "signInWithEmail: ", task.getException());
                             // TODO: display logins or network error
                         }

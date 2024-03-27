@@ -11,16 +11,16 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.evans.pillreminder.db.User;
+import com.evans.pillreminder.db.UserViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Objects;
 
 public class SplashActivity extends AppCompatActivity {
 
     private final long SPLASH_SCREEN_DELAY = 500;
     private SplashActivity context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,30 +32,48 @@ public class SplashActivity extends AppCompatActivity {
 
         context = this;
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Intent intent;
+        //
+        Intent mIntent = new Intent();
+        Intent fromIntent = getIntent();
+        if (fromIntent.getExtras() != null) {
+            try {
+                startActivity(new Intent(this, NotificationsActivity.class));
+                finish();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        //
 
-                if (user != null) {
-                    // User is signed in
-                    intent = new Intent(context, MainActivity.class);
-                    context.finish();
-                } else {
-                    // No user is signed in
-                    // if the user used google sign in api
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        new Handler().postDelayed(() -> {
+            Intent intent;
+
+            UserViewModel userViewModel = new UserViewModel(context.getApplication());
+            User localUser = userViewModel.getUser().getValue();
+            Log.i(MY_TAG, "Splash: " + localUser + " F: ");
+
+            if (user != null) {
+                // User is signed in
+                Log.i(MY_TAG, "SplashOnCreate: 1");
+                intent = new Intent(context, MainActivity.class);
+                startActivity(intent);
+                context.finish();
+            } else {
+                // No user is signed in
+                Log.i(MY_TAG, "SplashOnCreate: 2");
+                // if the user used google sign in api
 //                    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 //                            .requestIdToken(getString(R.string.default_web_client_id))
 //                            .requestEmail()
 //                            .build();
 //                    gso.getAccount();
 //                    Log.i(MY_TAG, "GSO: " + gso + " " + Objects.requireNonNull(gso.getAccount()));
-                    intent = new Intent(context, LoginActivity.class);
-                    context.finish();
-                }
-                startActivity(intent);
+                intent = new Intent(context, LoginActivity.class);
+                context.finish();
             }
+            startActivity(intent);
         }, SPLASH_SCREEN_DELAY);
     }
 }
