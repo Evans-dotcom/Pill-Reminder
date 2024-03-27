@@ -138,7 +138,7 @@ public class MedicationRepository {
         @Override
         protected Void doInBackground(Medication... medications) {
             medicationDAO.insert(medications[0]);
-            Log.w("M_Tag", "doInBackground: " + medications[0].getMedicationName());
+            Log.w(MY_TAG, "doInBackground: " + medications[0].getMedicationName());
             return null;
         }
     }

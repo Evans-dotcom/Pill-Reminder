@@ -1,6 +1,6 @@
 package com.evans.pillreminder.adapters;
 
-import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +8,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.evans.pillreminder.ChatActivity;
 import com.evans.pillreminder.R;
-import com.evans.pillreminder.fragments.ChatFragment;
 import com.evans.pillreminder.helpers.MessageView;
 import com.google.android.material.card.MaterialCardView;
 
@@ -63,10 +61,13 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
             @Override
             public void onClick(View v) {
                 // new fragment with chats displayed
-                FragmentManager fragmentManager = context.getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.messages_fragment, new ChatFragment());
-                fragmentTransaction.commit();
+//                FragmentManager fragmentManager = context.getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.messages_fragment, new ChatFragment()).addToBackStack(null);
+//                fragmentTransaction.commit();
+                // TODO: pass the user details to the next activity
+                Intent intent = new Intent(context, ChatActivity.class);
+                context.startActivity(intent);
             }
         });
     }

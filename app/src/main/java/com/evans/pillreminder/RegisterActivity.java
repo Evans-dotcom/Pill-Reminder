@@ -3,6 +3,7 @@ package com.evans.pillreminder;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,8 +18,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.evans.pillreminder.db.User;
+import com.evans.pillreminder.db.UserViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -88,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                             if (task1.isSuccessful()) {
                                                 Log.i(MY_TAG, "User logged in successfully");
                                                 DocumentReference userDocument = firestore.collection(
-                                                        DB_FIRESTORE_COLLECTIONS_USERS)
+                                                                DB_FIRESTORE_COLLECTIONS_USERS)
                                                         .document(Objects.requireNonNull(task1.getResult().getUser()).getUid());
 
                                                 Log.i(MY_TAG, "UID: " + Objects.requireNonNull(task1.getResult().getUser()).getUid());
@@ -104,6 +108,35 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                 userDocument.set(user).addOnSuccessListener(aVoid -> {
                                                     Log.i(MY_TAG, "User data saved successfully");
                                                     Objects.requireNonNull(mAuth.getCurrentUser()).sendEmailVerification();
+
+                                                    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                                                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                                                    String uid = Objects.requireNonNull(currentUser).getUid();
+
+                                                    DocumentReference mDocument = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS).document(uid);
+                                                    // store the user in the database
+                                                    mDocument.get().addOnSuccessListener(snapshot -> {
+                                                        boolean gender = genderSpinner.getSelectedItemPosition() != 0;
+                                                        String firstName = Objects.requireNonNull(user.get("firstName")).toString();
+                                                        String lastName = (Objects.requireNonNull(user.get("lastName")).toString());
+                                                        String phone = (Objects.requireNonNull(user.get("mobileNumber")).toString());
+                                                        String uEmail = (Objects.requireNonNull(user.get("email")).toString());
+                                                        String username = (Objects.requireNonNull(user.get("username")).toString());
+                                                        String imageURL = "";
+
+                                                        Log.i(MY_TAG, "Data: " + user);
+
+                                                        User dbUser = new User(firstName, lastName, phone, uEmail, gender, username, imageURL, uid);
+                                                        dbUser.setSynced(true);
+                                                        UserViewModel userViewModel = new UserViewModel((Application) getApplicationContext());
+                                                        userViewModel.deleteAny();
+                                                        userViewModel.insertFirst(dbUser);
+
+
+                                                        Intent intent = new Intent(v.getContext(), MainActivity.class);
+                                                        startActivity(intent);
+                                                        this.finish();
+                                                    });
 
                                                     Intent intent = new Intent(v.getContext(), MainActivity.class);
                                                     startActivity(intent);

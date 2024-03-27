@@ -1,14 +1,26 @@
 package com.evans.pillreminder;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_FIELD_USER_TOKEN;
+import static com.evans.pillreminder.helpers.Constants.FCM_TOPIC_UPDATES;
+import static com.evans.pillreminder.helpers.Constants.FILENAME_TOKEN_JSON;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+import static com.evans.pillreminder.helpers.UtilityFunctions.saveDictionary;
+import static com.evans.pillreminder.helpers.UtilityFunctions.saveTokenToFirestore;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
@@ -30,11 +42,32 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    // Declare the launcher at the top of your Activity/Fragment:
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // FCM SDK (and your app) can post notifications.
+                } else {
+                    // TODO: Inform user that that your app will not show notifications.
+                }
+            });
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equals("com.evans.pillreminder.fcm.notification")) {
+                loadFragment(new NotificationsFragment());
+                Log.i(MY_TAG, "onReceive: Fragment Loaded");
+            }
+            Log.i(MY_TAG, "Broadcast: " + context.toString() + " -> " + Objects.requireNonNull(intent).getClass());
+        }
+    };
     public MainActivity activity;
     FrameLayout mainFrameLayout;
     AppCompatImageButton imgBtnHome, imgBtnNotification, imgBtnAddMed, imgBtnHistory, imgBtnContactUs, imgBtnProfile;
@@ -42,17 +75,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FirebaseAuth auth;
     FirebaseFirestore firestore;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent bundle = getIntent();
+
+        if (bundle != null) {
+            Log.d(MY_TAG, "MAIN onResume: " + bundle.getStringExtra("fcmNotification"));
+
+            if (bundle.getStringExtra("fcmNotification") != null) {
+                Log.d(MY_TAG, "MAIN onResume: Has extra");
+                loadFragment(new NotificationsFragment());
+            }
+        }
+    }
+
     @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity = this;
-
         getWindow().setStatusBarColor(R.color.colorPurple);
+
+        activity = this;
+        Log.d(MY_TAG, "MAIN onCreate: ");
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        if (user == null) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
+
+        retrieveTheFCMToken();
+
+        //=====================================
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.evans.pillreminder.fcm.notification");
+        registerReceiver(mReceiver, filter);
+        //=====================================
 
         DocumentReference document = firestore.collection(DB_FIRESTORE_COLLECTIONS_USERS).document(Objects.requireNonNull(user).getUid());
 
@@ -71,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 loadFragment(new DoctorHomeFragment());
             } else {
                 setContentView(R.layout.activity_main);
+
+                subscribeToTopic(FCM_TOPIC_UPDATES);
                 mainFrameLayout = findViewById(R.id.mainFrameLayout);
 
                 imgBtnHome = findViewById(R.id.mainBNavHome);
@@ -92,10 +156,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }));
     }
 
+    private void retrieveTheFCMToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(MY_TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    // Log and toast
+                    Log.d(MY_TAG, token);
+
+                    saveDictionary(MainActivity.this, Map.of(DB_FIRESTORE_FIELD_USER_TOKEN, token), FILENAME_TOKEN_JSON);
+                    saveTokenToFirestore(token);
+                });
+    }
+
+    private void subscribeToTopic(@NonNull String topicName) {
+        FirebaseMessaging.getInstance()
+                .subscribeToTopic(topicName)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.i(MY_TAG, "Subscribed to " + topicName);
+                    } else {
+                        Log.e(MY_TAG, "Failed to subscribe to " + topicName);
+                    }
+                });
+    }
+
     private void loadFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.mainFrameLayout, fragment);
+//        fragmentTransaction.replace(R.id.mainFrameLayout, fragment);
+        fragmentTransaction.replace(R.id.mainFrameLayout, fragment, fragment.getClass().getName());
         fragmentTransaction.commit();
     }
 

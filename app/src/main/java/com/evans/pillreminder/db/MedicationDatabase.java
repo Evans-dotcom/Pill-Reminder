@@ -1,6 +1,7 @@
 package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_MEDICATIONS;
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.DB_ROOM_DB_NAME;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Medication.class}, version = 1, exportSchema = false)
+@Database(entities = {Medication.class, User.class}, version = 1, exportSchema = false)
 public abstract class MedicationDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
@@ -32,6 +33,7 @@ public abstract class MedicationDatabase extends RoomDatabase {
     // Add Firestore initialization and connection management if necessary
     private FirebaseFirestore firestore;
     private CollectionReference medicationsCollection;
+    private CollectionReference userCollection;
     private ListenerRegistration firestoreListener;
 
     public static synchronized MedicationDatabase getInstance(Context context) {
@@ -44,6 +46,8 @@ public abstract class MedicationDatabase extends RoomDatabase {
     }
 
     public abstract MedicationDAO medicationDAO();
+
+    public abstract UserDAO userDAO();
 
     // Add Firestore integration and data synchronization logic here
     public FirebaseFirestore getFirestore() {
@@ -70,6 +74,13 @@ public abstract class MedicationDatabase extends RoomDatabase {
             medicationsCollection = getFirestore().collection(DB_FIRESTORE_COLLECTIONS_MEDICATIONS);
         }
         return medicationsCollection;
+    }
+
+    private CollectionReference getUserCollection() {
+        if (userCollection == null) {
+            userCollection = getFirestore().collection(DB_FIRESTORE_COLLECTIONS_USERS);
+        }
+        return userCollection;
     }
 
     // Method to listen for changes in Firestore documents
