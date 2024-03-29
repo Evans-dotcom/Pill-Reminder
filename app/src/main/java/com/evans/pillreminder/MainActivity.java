@@ -78,16 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        Intent bundle = getIntent();
 
-        if (bundle != null) {
-            Log.d(MY_TAG, "MAIN onResume: " + bundle.getStringExtra("fcmNotification"));
-
-            if (bundle.getStringExtra("fcmNotification") != null) {
-                Log.d(MY_TAG, "MAIN onResume: Has extra");
-                loadFragment(new NotificationsFragment());
-            }
-        }
+        Log.w(MY_TAG, "On Resume");
     }
 
     @SuppressLint("ResourceAsColor")
@@ -107,6 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+
+//        if (getIntent().getExtras() != null) {
+//            Log.w(MY_TAG, "Has getIntent: ");
+//            setContentView(R.layout.activity_main);
+//            loadFragment(new NotificationsFragment());
+//        } else {
 
         retrieveTheFCMToken();
 
@@ -131,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imgBtnProfile.setOnClickListener(this);
 
                 loadFragment(new DoctorHomeFragment());
+
+                if (getIntent().getExtras() != null) {
+                    //
+//                    setContentView(R.layout.activity_main);
+                    loadFragment(new NotificationsFragment());
+                }
             } else {
                 setContentView(R.layout.activity_main);
 
@@ -152,8 +156,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imgBtnProfile.setOnClickListener(this);
 
                 loadFragment(new HomeFragment());
+
+                if (getIntent().getExtras() != null) {
+                    //
+//                    setContentView(R.layout.activity_main);
+                    loadFragment(new NotificationsFragment());
+                }
             }
         }));
+//        }
+//        if (getIntent().getExtras() != null) {
+//            //
+//            setContentView(R.layout.activity_main);
+//            loadFragment(new NotificationsFragment());
+//        }
     }
 
     private void retrieveTheFCMToken() {
