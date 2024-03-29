@@ -160,6 +160,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (getIntent().getExtras() != null) {
                     //
 //                    setContentView(R.layout.activity_main);
+                    Bundle extras = getIntent().getExtras();
+                    String senderID = getIntent().getStringExtra("senderID");
+                    String messageID = getIntent().getStringExtra("messageID");
+                    String message = getIntent().getStringExtra("message");
+                    long sentTime = getIntent().getLongExtra("sentTime", 0);
+
+                    Object clone = extras.clone();
+                    Log.d(MY_TAG, ">" + clone + " " + extras.getString("message") + "Received Message: " + message + " ID: " + messageID + " senderID: " + senderID + " sentTime: " + sentTime);
+
+                    Bundle extras1 = getIntent().getExtras();
+                    String senderID1 = extras.getString("senderID");
+                    String messageID1 = extras.getString("messageID");
+                    String message1 = extras.getString("message");
+                    long sentTime1 = extras.getLong("sentTime");
+
+                    Log.d(MY_TAG, "Received Message: " + message1 + " ID: " + messageID1 + " senderID: " + senderID1 + " sentTime: " + sentTime1);
+
+
+
                     loadFragment(new NotificationsFragment());
                 }
             }
