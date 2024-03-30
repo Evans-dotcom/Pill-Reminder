@@ -68,7 +68,7 @@
             </RelativeLayout>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardChatSend"
+                android:id="@+id/cardChatSendFragment"
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:layout_alignParentEnd="true"

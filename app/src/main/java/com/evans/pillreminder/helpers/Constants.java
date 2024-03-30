@@ -7,7 +7,8 @@ public class Constants {
 
     // Database
     public static final String DB_ROOM_DB_NAME = "medication_database";
-    public static final String DB_TABLE_NAME = "medication";
+    public static final String DB_TABLE_NAME_MEDICATIONS = "medication";
+    public static final String DB_TABLE_NAME_MESSAGES = "messages";
     public static final String DB_USER_TABLE_NAME = "user";
     public static final String DB_COLUMN_MEDICATION_NAME = "med_name";
     public static final String DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID = "med_document_id";
@@ -20,6 +21,8 @@ public class Constants {
     public static final String DB_COLUMN_MEDICATION_DOSAGE_FOR = "med_duration"; // prescription duration
     public static final String DB_FIRESTORE_COLLECTIONS_MEDICATIONS = "/medications";
     public static final String DB_FIRESTORE_COLLECTIONS_USERS = "/users";
+    public static final String DB_FIRESTORE_COLLECTIONS_MESSAGES = "/messages";
+    public static final String DB_FIRESTORE_SUB_COLLECTIONS_MESSAGE = "/message";
     public static final String DB_FIRESTORE_FIELD_USER_TOKEN = "fcmToken";
 
     // Notifications

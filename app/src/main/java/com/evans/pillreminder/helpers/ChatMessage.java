@@ -1,11 +1,22 @@
 package com.evans.pillreminder.helpers;
 
 public class ChatMessage {
-    String message, messageTime;
+    String message;
+    long messageTime;
+    String recipientID;
 
-    public ChatMessage(String message, String messageTime) {
+    public ChatMessage(String message, long messageTime, String recipientID) {
         this.message = message;
         this.messageTime = messageTime;
+        this.recipientID = recipientID;
+    }
+
+    public String getRecipientID() {
+        return recipientID;
+    }
+
+    public void setRecipientID(String recipientID) {
+        this.recipientID = recipientID;
     }
 
     public String getMessage() {
@@ -16,11 +27,11 @@ public class ChatMessage {
         this.message = message;
     }
 
-    public String getMessageTime() {
+    public long getMessageTime() {
         return messageTime;
     }
 
-    public void setMessageTime(String messageTime) {
+    public void setMessageTime(long messageTime) {
         this.messageTime = messageTime;
     }
 }

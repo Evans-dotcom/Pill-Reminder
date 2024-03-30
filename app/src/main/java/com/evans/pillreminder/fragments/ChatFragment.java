@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.ChatAdapter;
-import com.evans.pillreminder.adapters.MessageViewAdapter;
+
+import java.util.ArrayList;
 
 public class ChatFragment extends Fragment {
     RecyclerView chatRecyclerView;
@@ -52,7 +53,8 @@ public class ChatFragment extends Fragment {
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         chatRecyclerView.setHasFixedSize(true);
 
-        ChatAdapter adapter = new ChatAdapter();
+        // FIXME: if I ever get used
+        ChatAdapter adapter = new ChatAdapter(new ArrayList<>());
         chatRecyclerView.setAdapter(adapter);
     }
 }

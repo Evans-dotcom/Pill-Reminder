@@ -1,12 +1,31 @@
 package com.evans.pillreminder.helpers;
 
 public class MessageView {
-    String senderName, lastMessageTime, lastMessage;
+    String senderName, lastMessage, recipientID, recipientToken;
+    long lastMessageTime;
 
-    public MessageView(String senderName, String lastMessageTime, String lastMessage) {
+    public MessageView(String senderName, long lastMessageTime, String lastMessage, String recipientID, String recipientToken) {
         this.senderName = senderName;
         this.lastMessageTime = lastMessageTime;
         this.lastMessage = lastMessage;
+        this.recipientID = recipientID;
+        this.recipientToken = recipientToken;
+    }
+
+    public String getRecipientID() {
+        return recipientID;
+    }
+
+    public void setRecipientID(String recipientID) {
+        this.recipientID = recipientID;
+    }
+
+    public String getRecipientToken() {
+        return recipientToken;
+    }
+
+    public void setRecipientToken(String recipientToken) {
+        this.recipientToken = recipientToken;
     }
 
     public String getSenderName() {
@@ -17,11 +36,11 @@ public class MessageView {
         this.senderName = senderName;
     }
 
-    public String getLastMessageTime() {
+    public long getLastMessageTime() {
         return lastMessageTime;
     }
 
-    public void setLastMessageTime(String lastMessageTime) {
+    public void setLastMessageTime(long lastMessageTime) {
         this.lastMessageTime = lastMessageTime;
     }
 

@@ -1,5 +1,6 @@
 package com.evans.pillreminder.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
+import com.evans.pillreminder.SelectRecipientActivity;
 import com.evans.pillreminder.adapters.MessageViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MessagesFragment extends Fragment implements View.OnClickListener {
     RecyclerView messagesViewRecyclerView;
     FloatingActionButton fabCreateNewMessage;
+    private MessageViewAdapter adapter;
 
     public MessagesFragment() {
     }
@@ -39,7 +42,17 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         messagesViewRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         messagesViewRecyclerView.setHasFixedSize(true);
 
-        MessageViewAdapter adapter = new MessageViewAdapter(this.getActivity());
+        adapter = new MessageViewAdapter(this.getActivity());
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
+
+        LinearLayoutManager manager = new LinearLayoutManager(this.getContext());
+        messagesViewRecyclerView.setLayoutManager(manager);
         messagesViewRecyclerView.setAdapter(adapter);
 
         fabCreateNewMessage.setOnClickListener(this);
@@ -49,6 +62,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         if (v.getId() == R.id.messagesStartNew) {
             //
+            Intent intent = new Intent(getContext(), SelectRecipientActivity.class);
+            startActivity(intent);
         }
     }
 }

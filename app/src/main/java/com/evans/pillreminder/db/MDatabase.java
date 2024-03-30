@@ -24,21 +24,21 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Medication.class, User.class}, version = 1, exportSchema = false)
-public abstract class MedicationDatabase extends RoomDatabase {
+@Database(entities = {Medication.class, User.class, Message.class}, version = 1, exportSchema = false)
+public abstract class MDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     // Add methods for Firestore data synchronization
-    private static volatile MedicationDatabase INSTANCE;
+    private static volatile MDatabase INSTANCE;
     // Add Firestore initialization and connection management if necessary
     private FirebaseFirestore firestore;
     private CollectionReference medicationsCollection;
     private CollectionReference userCollection;
     private ListenerRegistration firestoreListener;
 
-    public static synchronized MedicationDatabase getInstance(Context context) {
+    public static synchronized MDatabase getInstance(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), MedicationDatabase.class, DB_ROOM_DB_NAME)
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), MDatabase.class, DB_ROOM_DB_NAME)
                     .fallbackToDestructiveMigration()
                     .build();
         }
@@ -46,6 +46,8 @@ public abstract class MedicationDatabase extends RoomDatabase {
     }
 
     public abstract MedicationDAO medicationDAO();
+
+    public abstract MessageDAO messageDAO();
 
     public abstract UserDAO userDAO();
 

@@ -29,7 +29,7 @@ public class UserRepository {
     private volatile boolean updating = false;
 
     UserRepository(Application application) {
-        MedicationDatabase medDB = MedicationDatabase.getInstance(application);
+        MDatabase medDB = MDatabase.getInstance(application);
         userDAO = medDB.userDAO();
         user = userDAO.getUser();
         Log.i(MY_TAG, "DB: " + medDB.isOpen() + " D:" + " U:" + user.getValue());
