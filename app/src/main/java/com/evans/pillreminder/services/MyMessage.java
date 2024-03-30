@@ -22,8 +22,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.evans.pillreminder.MainActivity;
 import com.evans.pillreminder.R;
-import com.evans.pillreminder.SplashActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -60,20 +60,32 @@ public class MyMessage extends FirebaseMessagingService {
         super.onMessageReceived(message);
         // show notification
         // FIXME: show 'New Message' if no title
-        showNotification(message.getNotification().getTitle(), message.getNotification().getBody());
+        Log.i(MY_TAG, "MessageReceived:\n\n\n\n" + message + "\n\n\n\n");
+        showNotification(message);
         // trigger broadcast receiver
     }
 
-    private void showNotification(String title, String body) {
+    private void showNotification(RemoteMessage msg) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID)
-                .setContentTitle(title)
+                .setContentTitle(msg.getNotification().getTitle())
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.capsule_right_svg)
-                .setContentText(body);
+                .setContentText(msg.getNotification().getBody());
 
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.putExtra("fcmNotification", "notification received");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = new Intent(this, MainActivity.class);
+
+        String senderId = msg.getSenderId();
+        long sentTime = msg.getSentTime();
+        String messageId = msg.getMessageId();
+        String body = msg.getNotification().getBody();
+//        msg.getFrom();
+
+        intent.putExtra("senderID", senderId);
+        intent.putExtra("sentTime", sentTime);
+        intent.putExtra("messageID", messageId);
+        intent.putExtra("message", body);
+
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -90,7 +102,7 @@ public class MyMessage extends FirebaseMessagingService {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Log.i(MY_TAG, title + " >: " + body);
+        Log.i(MY_TAG, msg.getNotification().getTitle() + " >BODY: " + msg.getNotification().getBody());
         manager.notify(FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID, builder.build());
     }
 }

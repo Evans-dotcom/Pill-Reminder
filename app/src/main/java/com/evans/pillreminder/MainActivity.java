@@ -78,16 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        Intent bundle = getIntent();
 
-        if (bundle != null) {
-            Log.d(MY_TAG, "MAIN onResume: " + bundle.getStringExtra("fcmNotification"));
-
-            if (bundle.getStringExtra("fcmNotification") != null) {
-                Log.d(MY_TAG, "MAIN onResume: Has extra");
-                loadFragment(new NotificationsFragment());
-            }
-        }
+        Log.w(MY_TAG, "On Resume");
     }
 
     @SuppressLint("ResourceAsColor")
@@ -107,6 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
+
+//        if (getIntent().getExtras() != null) {
+//            Log.w(MY_TAG, "Has getIntent: ");
+//            setContentView(R.layout.activity_main);
+//            loadFragment(new NotificationsFragment());
+//        } else {
 
         retrieveTheFCMToken();
 
@@ -131,6 +129,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imgBtnProfile.setOnClickListener(this);
 
                 loadFragment(new DoctorHomeFragment());
+
+                if (getIntent().getExtras() != null) {
+                    //
+//                    setContentView(R.layout.activity_main);
+                    loadFragment(new NotificationsFragment());
+                }
             } else {
                 setContentView(R.layout.activity_main);
 
@@ -152,8 +156,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imgBtnProfile.setOnClickListener(this);
 
                 loadFragment(new HomeFragment());
+
+                if (getIntent().getExtras() != null) {
+                    //
+//                    setContentView(R.layout.activity_main);
+                    Bundle extras = getIntent().getExtras();
+                    String senderID = getIntent().getStringExtra("senderID");
+                    String messageID = getIntent().getStringExtra("messageID");
+                    String message = getIntent().getStringExtra("message");
+                    long sentTime = getIntent().getLongExtra("sentTime", 0);
+
+                    Object clone = extras.clone();
+                    Log.d(MY_TAG, ">" + clone + " " + extras.getString("message") + "Received Message: " + message + " ID: " + messageID + " senderID: " + senderID + " sentTime: " + sentTime);
+
+                    Bundle extras1 = getIntent().getExtras();
+                    String senderID1 = extras.getString("senderID");
+                    String messageID1 = extras.getString("messageID");
+                    String message1 = extras.getString("message");
+                    long sentTime1 = extras.getLong("sentTime");
+
+                    Log.d(MY_TAG, "Received Message: " + message1 + " ID: " + messageID1 + " senderID: " + senderID1 + " sentTime: " + sentTime1);
+
+
+
+                    loadFragment(new NotificationsFragment());
+                }
             }
         }));
+//        }
+//        if (getIntent().getExtras() != null) {
+//            //
+//            setContentView(R.layout.activity_main);
+//            loadFragment(new NotificationsFragment());
+//        }
     }
 
     private void retrieveTheFCMToken() {

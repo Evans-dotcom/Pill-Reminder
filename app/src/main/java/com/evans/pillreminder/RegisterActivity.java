@@ -103,7 +103,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                         "email", email,
                                                         "username", Objects.requireNonNull(username.getEditText()).getText().toString(),
                                                         "mobileNumber", Objects.requireNonNull(mobileNumber.getEditText()).getText().toString(),
-                                                        "genderID", genderSpinner.getSelectedItemPosition());
+                                                        "genderID", genderSpinner.getSelectedItemPosition(),
+                                                        "uid", task1.getResult().getUser().getUid()
+                                                );
 
                                                 userDocument.set(user).addOnSuccessListener(aVoid -> {
                                                     Log.i(MY_TAG, "User data saved successfully");
