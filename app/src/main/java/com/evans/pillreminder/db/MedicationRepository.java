@@ -32,7 +32,7 @@ public class MedicationRepository {
 //    }
 
     MedicationRepository(Application application) {
-        MedicationDatabase medDB = MedicationDatabase.getInstance(application);
+        MDatabase medDB = MDatabase.getInstance(application);
         medicationDAO = medDB.medicationDAO();
         allMedications = medicationDAO.getAllMedications();
     }
@@ -102,12 +102,7 @@ public class MedicationRepository {
     // Method to upload local changes to Firestore
     private void uploadLocalChangesToFirestore() {
         setUpdating(true);
-        UploadUnsyncData.OnTaskCompleteListener<List<Medication>> listener = new UploadUnsyncData.OnTaskCompleteListener<List<Medication>>() {
-            @Override
-            public void onTaskComplete(List<Medication> result) {
-                Log.i(MY_TAG, "onTaskComplete: " + result.get(0));
-            }
-        };
+        UploadUnsyncData.OnTaskCompleteListener<List<Medication>> listener = result -> Log.i(MY_TAG, "onTaskComplete: " + result.get(0));
         new UploadUnsyncData(medicationDAO, getFirestore(), listener).execute();
     }
 

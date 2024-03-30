@@ -95,10 +95,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+        // FIXME
         if (user == null) {
+            Log.i(MY_TAG, "MainUserNull");
+            FirebaseFirestore.getInstance().clearPersistence();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+        } else {
+            Log.i(MY_TAG, "MainUser: " + user.getDisplayName());
         }
+        Log.i(MY_TAG, "MainPass: " + user);
 
 //        if (getIntent().getExtras() != null) {
 //            Log.w(MY_TAG, "Has getIntent: ");
@@ -160,23 +166,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (getIntent().getExtras() != null) {
                     //
 //                    setContentView(R.layout.activity_main);
-                    Bundle extras = getIntent().getExtras();
-                    String senderID = getIntent().getStringExtra("senderID");
-                    String messageID = getIntent().getStringExtra("messageID");
-                    String message = getIntent().getStringExtra("message");
-                    long sentTime = getIntent().getLongExtra("sentTime", 0);
+                    Intent intent = getIntent();
+//                    Bundle extras = getIntent().getExtras();
+                    String senderID = intent.getStringExtra("senderID");
+                    String messageID = intent.getStringExtra("messageID");
+                    String message = intent.getStringExtra("message");
+                    long sentTime = intent.getLongExtra("sentTime", 0);
 
-                    Object clone = extras.clone();
-                    Log.d(MY_TAG, ">" + clone + " " + extras.getString("message") + "Received Message: " + message + " ID: " + messageID + " senderID: " + senderID + " sentTime: " + sentTime);
+//                    Object clone = extras.clone();
+//                    extras.setClassLoader(RemoteMessage.class.getClassLoader());
+//                    Parcelable message2 = extras.getParcelable("msg");
+                    Log.d(MY_TAG, intent + " > " + intent.getStringExtra("message") + "Received Message: " + message + " ID: " + messageID + " senderID: " + senderID + " sentTime: " + sentTime);
 
                     Bundle extras1 = getIntent().getExtras();
-                    String senderID1 = extras.getString("senderID");
-                    String messageID1 = extras.getString("messageID");
-                    String message1 = extras.getString("message");
-                    long sentTime1 = extras.getLong("sentTime");
+                    if (extras1 == null) {
+                        Log.i(MY_TAG, "EXTRA: NULL");
+                        return;
+                    }
+                    String senderID1 = extras1.getString("senderID");
+                    String messageID1 = extras1.getString("messageID");
+                    String message1 = extras1.getString("message");
+                    long sentTime1 = extras1.getLong("sentTime");
 
                     Log.d(MY_TAG, "Received Message: " + message1 + " ID: " + messageID1 + " senderID: " + senderID1 + " sentTime: " + sentTime1);
-
 
 
                     loadFragment(new NotificationsFragment());

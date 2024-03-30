@@ -9,7 +9,7 @@ import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NAME
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_NOTE;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_REMINDER_TIME;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_START_DATE;
-import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME;
+import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME_MEDICATIONS;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +29,7 @@ import java.util.Objects;
  * Create a table in the SQLite database named DB_TABLE_NAME
  */
 @IgnoreExtraProperties
-@Entity(tableName = DB_TABLE_NAME)
+@Entity(tableName = DB_TABLE_NAME_MEDICATIONS)
 public class Medication {
 
     @Exclude

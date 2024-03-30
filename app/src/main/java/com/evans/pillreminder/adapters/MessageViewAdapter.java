@@ -24,26 +24,15 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
     List<MessageView> messages = new ArrayList<>();
     FragmentActivity context;
 
+
     public MessageViewAdapter(FragmentActivity context) {
         this.context = context;
     }
 
-    {
-        messages.add(new MessageView("Brandon Mwangi", "13:54", "Description 1"));
-        messages.add(new MessageView("Brandon Maina", "13:54", "Description 2"));
-        messages.add(new MessageView("Jane Mwangi", "13:54", "Description 3"));
-        messages.add(new MessageView("Joe Mwangi", "13:54", "Description 4"));
-        messages.add(new MessageView("Jack Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Sammy Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Jake Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Brenda Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Mary Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Leah Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("James Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Ruth Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Lyn Mwangi", "13:54", "Description"));
-        messages.add(new MessageView("Jade Mwangi", "13:54", "Description"));
-    }
+//    {
+//        messages.add(new MessageView("George N", "13:54", "Description 1", "1FWHdkeDLPezEzhaFQSMiuLDzGW2", "ejnhwXolTBaiFpy-pujwr7:APA91bHabyDTduhl8T_wJA2Jy6m5PHaRB3f7-jWK-6t2vn6e5VGlDiy0ol3sHxJSnfT8fmb4zYL5ldxGVq1xBhxwSZHrDeSzV4nVGd1GZhAxeEnPlWY0WCk_rVUYPw3nDtK0z6cSUNmo"));
+//        messages.add(new MessageView("Evans L", "13:56", "Description", "PW6t2plxsKXzJGio5BgR4JDO0wi1", "dkaWLKyiRwaiD4bc1RB11d:APA91bHGUXOWDBLjcxGRjTy348zUhfMx7xXAfffBHq24e3SBC__7kVT1QssbZFGh9cJlAc7MUxkDWi4v32KE1oEqjVA3tQfkkQ3kIe4QCbM-D8gkfMnuk14c6gkOgc4voUVzEbXPr6KR"));
+//    }
 
     @NonNull
     @Override
@@ -56,7 +45,7 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
     public void onBindViewHolder(@NonNull MessageViewAdapter.MessageViewViewHolder holder, int position) {
         holder.senderName.setText(messages.get(position).getSenderName());
         holder.lastMessageView.setText(messages.get(position).getLastMessage());
-        holder.lastMessageTime.setText(messages.get(position).getLastMessageTime());
+        holder.lastMessageTime.setText(String.valueOf(messages.get(position).getLastMessageTime()));
         holder.messageViewView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,6 +56,8 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
 //                fragmentTransaction.commit();
                 // TODO: pass the user details to the next activity
                 Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("recipientID", messages.get(position).getRecipientID());
+                intent.putExtra("recipientToken", messages.get(position).getRecipientToken());
                 context.startActivity(intent);
             }
         });

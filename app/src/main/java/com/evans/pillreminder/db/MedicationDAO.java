@@ -3,7 +3,7 @@ package com.evans.pillreminder.db;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_FIRESTORE_SYNCED;
 import static com.evans.pillreminder.helpers.Constants.DB_COLUMN_MEDICATION_REMINDER_TIME;
-import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME;
+import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME_MEDICATIONS;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Dao
 public interface MedicationDAO {
-    @Query("SELECT * FROM " + DB_TABLE_NAME + " ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
     LiveData<List<Medication>> getAllMedications();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -29,14 +29,14 @@ public interface MedicationDAO {
     @Delete
     void delete(Medication medication);
 
-    @Query("DELETE FROM " + DB_TABLE_NAME)
+    @Query("DELETE FROM " + DB_TABLE_NAME_MEDICATIONS)
     void deleteAll();
 
-    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_SYNCED + " = 0 AND " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = 'EMPTY' ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_SYNCED + " = 0 AND " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = 'EMPTY' ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
     List<Medication> getUnsyncedMedications(); // Get unsynced medications
 
     // Additional methods for syncing with Firestore
-    @Query("SELECT * FROM " + DB_TABLE_NAME + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = :documentId")
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " WHERE " + DB_COLUMN_MEDICATION_FIRESTORE_DOCUMENT_ID + " = :documentId")
     Medication getMedicationByDocumentId(String documentId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
