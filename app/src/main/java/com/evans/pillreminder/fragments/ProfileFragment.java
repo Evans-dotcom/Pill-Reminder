@@ -1,8 +1,11 @@
 package com.evans.pillreminder.fragments;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
+import static com.evans.pillreminder.helpers.Constants.FILENAME_TOKEN_JSON;
 import static com.evans.pillreminder.helpers.Constants.FILENAME_USER_DETAILS_JSON;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+import static com.evans.pillreminder.helpers.UtilityFunctions.deleteFile;
+import static com.evans.pillreminder.helpers.UtilityFunctions.deleteRoomDatabase;
 import static com.evans.pillreminder.helpers.UtilityFunctions.readDictionaryFile;
 import static com.evans.pillreminder.helpers.UtilityFunctions.saveDictionary;
 
@@ -121,6 +124,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener, G
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btnLogout) {
+            deleteFile(context, FILENAME_TOKEN_JSON);
+            deleteFile(context, FILENAME_USER_DETAILS_JSON);
+            deleteRoomDatabase(v.getContext());
             mAuth.signOut();
             // TODO: logout user that joined using google
 //            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
