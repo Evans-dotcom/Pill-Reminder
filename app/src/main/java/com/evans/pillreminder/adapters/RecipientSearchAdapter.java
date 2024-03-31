@@ -47,18 +47,23 @@ public class RecipientSearchAdapter extends RecyclerView.Adapter<RecipientSearch
         String doctorName = doctors.get(position).getFirstName() + " " + doctors.get(position).getLastName();
 
         if (userID.equals(doctors.get(position).getDoctorUID())) {
+            // FIXME: this is a hack to show the user that they are the sender
             doctorName += "(You)";
+            holder.messageViewView.setVisibility(View.GONE);
         }
 
         holder.doctorImage.setImageResource(doctors.get(position).getDoctorImage());
         holder.doctorName.setText(doctorName);
 
         holder.messageViewView.setOnClickListener(v -> {
+            String recipientName = doctors.get(position).getFirstName() + " " + doctors.get(position).getLastName();
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra("recipientID", doctors.get(position).getDoctorUID());
             intent.putExtra("recipientToken", doctors.get(position).getDoctorToken());
+            intent.putExtra("recipientName", recipientName);
             context.startActivity(intent);
         });
+
     }
 
     @Override

@@ -22,6 +22,7 @@ public class Message {
     private String message;
     private String receiverID;
     private String senderID;
+    private String receiverName;
     private long timestamp;
     private boolean synced;
     //    @Unique
@@ -29,11 +30,10 @@ public class Message {
     @NonNull
     private String documentId;
     private String recipientToken;
-
     public Message() {
     }
 
-    public Message(String message, String senderID, String receiverID, long timestamp, @NonNull String fbMessageID, String receiverToken) {
+    public Message(String message, String senderID, String receiverID, long timestamp, @NonNull String fbMessageID, String receiverToken, String receiverName) {
         this.message = message;
         this.senderID = senderID;
         this.receiverID = receiverID;
@@ -41,6 +41,7 @@ public class Message {
         this.synced = false;
         this.documentId = fbMessageID;
         this.recipientToken = receiverToken;
+        this.receiverName = receiverName;
     }
 
     public static List<ChatMessage> getChatMessagesFormat(List<Message> messages) {
@@ -59,10 +60,18 @@ public class Message {
         List<MessageView> messageList = new ArrayList<>();
         if (messages != null) {
             if (!messages.isEmpty()) {
-                messages.forEach(message -> messageList.add(new MessageView("Test Name Alpha", message.getTimestamp(), message.getMessage(), message.getReceiverID(), message.getRecipientToken())));
+                messages.forEach(message -> messageList.add(new MessageView(message.getReceiverName(), message.getTimestamp(), message.getMessage(), message.getReceiverID(), message.getRecipientToken())));
             }
         }
         return messageList;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
     public String getSenderID() {

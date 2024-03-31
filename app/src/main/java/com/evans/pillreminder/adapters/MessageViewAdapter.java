@@ -7,26 +7,33 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.ChatActivity;
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.helpers.MessageView;
-import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.MessageViewViewHolder> {
+    private final String userID;
     List<MessageView> messages = new ArrayList<>();
     FragmentActivity context;
 
-
     public MessageViewAdapter(FragmentActivity context) {
         this.context = context;
+        userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+    }
+
+    public void setMessages(List<MessageView> messages) {
+        this.messages = messages;
     }
 
     @NonNull
@@ -38,9 +45,17 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewAdapter.MessageViewViewHolder holder, int position) {
-        holder.senderName.setText(messages.get(position).getSenderName());
+        String userFullName = messages.get(position).getSenderName() +
+                ((messages.get(position).getRecipientID().equals(userID)) ? "(You)" : "");
+
+        if (messages.get(position).getRecipientID().equals(userID)) {
+            holder.messageViewView.setVisibility(View.GONE);
+        }
+
+        holder.senderName.setText(userFullName);
         holder.lastMessageView.setText(messages.get(position).getLastMessage());
         holder.lastMessageTime.setText(String.valueOf(messages.get(position).getLastMessageTime()));
+
         holder.messageViewView.setOnClickListener(v -> {
             // new fragment with chats displayed
 //                FragmentManager fragmentManager = context.getSupportFragmentManager();
@@ -51,6 +66,7 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra("recipientID", messages.get(position).getRecipientID());
             intent.putExtra("recipientToken", messages.get(position).getRecipientToken());
+            intent.putExtra("recipientName", messages.get(position).getSenderName());
             context.startActivity(intent);
         });
     }
@@ -61,7 +77,7 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
     }
 
     public static class MessageViewViewHolder extends RecyclerView.ViewHolder {
-        MaterialCardView messageViewView;
+        CardView messageViewView;
         CircleImageView senderImage;
         TextView senderName, lastMessageView, lastMessageTime;
 

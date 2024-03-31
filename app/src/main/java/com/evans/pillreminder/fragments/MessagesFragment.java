@@ -15,12 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.SelectRecipientActivity;
 import com.evans.pillreminder.adapters.MessageViewAdapter;
+import com.evans.pillreminder.db.Message;
+import com.evans.pillreminder.db.MessageViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 public class MessagesFragment extends Fragment implements View.OnClickListener {
     RecyclerView messagesViewRecyclerView;
     FloatingActionButton fabCreateNewMessage;
+    MessageViewModel messageViewModel;
     private MessageViewAdapter adapter;
+    private List<Message> groupedMessagesList;
 
     public MessagesFragment() {
     }
@@ -30,6 +36,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         return inflater.inflate(R.layout.fragment_messages, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        messageViewModel = new MessageViewModel(requireActivity().getApplication());
     }
 
     @Override
@@ -47,7 +59,11 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
+                groupedMessagesList = messageViewModel.getGroupedMessagesList();
+                adapter.setMessages(Message.getMessageViewFormat(groupedMessagesList));
+                requireActivity().runOnUiThread(() -> {//
+                    adapter.notifyDataSetChanged();
+                });
             }
         }).start();
 

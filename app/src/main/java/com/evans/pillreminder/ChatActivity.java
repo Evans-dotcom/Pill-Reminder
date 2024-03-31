@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.adapters.ChatAdapter;
 import com.evans.pillreminder.db.Message;
-import com.evans.pillreminder.db.MessageRepository;
+import com.evans.pillreminder.db.MessageViewModel;
 import com.evans.pillreminder.helpers.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -36,8 +36,8 @@ public class ChatActivity extends AppCompatActivity {
     EditText etChatInput;
     ImageButton cardChatSend;
     RecyclerView chatFragmentRecyclerView;
-    String userID, recipientID, recipientToken;
-    MessageRepository messageRepository;
+    String userID, recipientID, recipientToken, receiverName;
+    MessageViewModel messageViewModel;
     private FirebaseFirestore firestore;
     private List<Message> messagesByReceiverID;
     private ChatAdapter adapter;
@@ -57,10 +57,11 @@ public class ChatActivity extends AppCompatActivity {
 
         recipientID = getIntent().getStringExtra("recipientID");
         recipientToken = getIntent().getStringExtra("recipientToken");
+        receiverName = getIntent().getStringExtra("recipientName");
 
         Log.w(MY_TAG, "onCreate: " + recipientID + " " + recipientToken);
 
-        messageRepository = new MessageRepository(getApplication());
+        messageViewModel = new MessageViewModel(getApplication());
 
         firestore = FirebaseFirestore.getInstance();
         userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
@@ -90,16 +91,19 @@ public class ChatActivity extends AppCompatActivity {
 
                             Log.e(MY_TAG, messageSender + " MESSAGE " + message.get("message") + " REC: " + messageReceiver + " MSG_ID: " + messageID);
 
-                            messageRepository.insert(new Message(Objects.requireNonNull(message.get("message")).toString(),
+                            messageViewModel.insert(new Message(
+                                    Objects.requireNonNull(message.get("message")).toString(),
                                     messageSender,
                                     messageReceiver,
                                     Long.parseLong(Objects.requireNonNull(message.get("timestamp")).toString()),
                                     messageID,
-                                    this.recipientToken));
+                                    this.recipientToken,
+                                    this.receiverName
+                            ));
 
                             new Thread(() -> {
-                                messagesByReceiverID = messageRepository.getIndividualsMessage(userID, recipientID);
-                                // Log.d(MY_TAG, "Messages: " + messagesByReceiverID.stream().filter((message -> message.getReceiverID())));
+                                messagesByReceiverID = messageViewModel.getIndividualsMessage(userID, recipientID);
+
                                 messagesByReceiverID.stream().iterator().forEachRemaining(msg -> {
                                     //
                                     Log.d(MY_TAG, userID + " :MessageSender: " + msg.getReceiverID() + " <> " + msg.getMessage());
@@ -199,12 +203,14 @@ public class ChatActivity extends AppCompatActivity {
                         .addOnCompleteListener((aTask) -> {
                             if (aTask.isSuccessful()) {
                                 String recipientToken = Objects.requireNonNull(aTask.getResult().get(DB_FIRESTORE_FIELD_USER_TOKEN)).toString();
+                                String receiverName = Objects.requireNonNull(aTask.getResult().get("firstName")) + " " +
+                                        Objects.requireNonNull(aTask.getResult().get("lastName"));
                                 String messageID = aTask.getResult().getId(); // TODO: look at this if data repeats
 
-                                messageRepository.insert(new Message(message, userID, recipientID, timestamp, messageID, recipientToken));
+                                messageViewModel.insert(new Message(message, userID, recipientID, timestamp, messageID, recipientToken, receiverName));
 
                                 new Thread(() -> {
-                                    messagesByReceiverID = messageRepository.getIndividualsMessage(userID, recipientID);
+                                    messagesByReceiverID = messageViewModel.getIndividualsMessage(userID, recipientID);
                                     adapter.setChatMessages(Message.getChatMessagesFormat(messagesByReceiverID));
                                     runOnUiThread(() -> {
                                         //
