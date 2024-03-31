@@ -30,7 +30,7 @@ public class MessageViewModel extends AndroidViewModel {
         messageRepository.update(message);
     }
 
-    public List<Message> getIndividualsMessages(String receiverID) {
-        return messageRepository.getIndividualsMessage(receiverID);
+    public List<Message> getIndividualsMessages(String userID, String receiverID) {
+        return messageRepository.getIndividualsMessage(userID, receiverID);
     }
 }

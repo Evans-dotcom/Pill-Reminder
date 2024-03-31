@@ -1,7 +1,9 @@
 package com.evans.pillreminder;
 
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_MESSAGES;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_FIELD_USER_TOKEN;
+import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_SUB_COLLECTIONS_MESSAGE;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import com.evans.pillreminder.db.MessageRepository;
 import com.evans.pillreminder.helpers.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.RemoteMessage;
@@ -44,6 +47,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
+
+//        getSupportActionBar().setTitle("Hello");
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -53,21 +58,66 @@ public class ChatActivity extends AppCompatActivity {
         recipientID = getIntent().getStringExtra("recipientID");
         recipientToken = getIntent().getStringExtra("recipientToken");
 
+        Log.w(MY_TAG, "onCreate: " + recipientID + " " + recipientToken);
+
         messageRepository = new MessageRepository(getApplication());
+
+        firestore = FirebaseFirestore.getInstance();
+        userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
 
 //        adapter = new ChatAdapter(Message.getChatMessagesFormat(messagesByReceiverID));
         adapter = new ChatAdapter();
         new Thread(() -> {
-            messagesByReceiverID = messageRepository.getIndividualsMessage(recipientID);
-            adapter.setChatMessages(Message.getChatMessagesFormat(messagesByReceiverID));
-            Log.d(MY_TAG, ">>: " + Message.getChatMessagesFormat(messagesByReceiverID).size());
-            adapter.notifyDataSetChanged();
+            String conversationID;
+            if (userID.compareTo(recipientID) > 0) {
+                conversationID = recipientID + "-" + userID;
+            } else {
+                conversationID = userID + "-" + recipientID;
+            }
+            Log.d(MY_TAG, "ConvID: " + conversationID);
+
+            firestore.collection(DB_FIRESTORE_COLLECTIONS_MESSAGES)
+                    .document(conversationID)
+                    .collection(DB_FIRESTORE_SUB_COLLECTIONS_MESSAGE)
+                    .get().addOnSuccessListener((task) -> {
+                        List<DocumentSnapshot> conversationMessages = task.getDocuments();
+
+                        conversationMessages.forEach((message) -> {
+                            String messageReceiver = userID.equals(Objects.requireNonNull(message.get("senderID")).toString()) ? recipientID : userID;
+                            String messageSender = userID.equals(Objects.requireNonNull(message.get("senderID")).toString()) ? userID : recipientID;
+                            String messageID = Objects.requireNonNull(message.get("timestamp")).toString();
+
+                            Log.e(MY_TAG, messageSender + " MESSAGE " + message.get("message") + " REC: " + messageReceiver + " MSG_ID: " + messageID);
+
+                            messageRepository.insert(new Message(Objects.requireNonNull(message.get("message")).toString(),
+                                    messageSender,
+                                    messageReceiver,
+                                    Long.parseLong(Objects.requireNonNull(message.get("timestamp")).toString()),
+                                    messageID,
+                                    this.recipientToken));
+
+                            new Thread(() -> {
+                                messagesByReceiverID = messageRepository.getIndividualsMessage(userID, recipientID);
+                                // Log.d(MY_TAG, "Messages: " + messagesByReceiverID.stream().filter((message -> message.getReceiverID())));
+                                messagesByReceiverID.stream().iterator().forEachRemaining(msg -> {
+                                    //
+                                    Log.d(MY_TAG, userID + " :MessageSender: " + msg.getReceiverID() + " <> " + msg.getMessage());
+                                });
+
+                                adapter.setChatMessages(Message.getChatMessagesFormat(messagesByReceiverID));
+                                Log.d(MY_TAG, ">>: " + Message.getChatMessagesFormat(messagesByReceiverID).size());
+
+                                runOnUiThread(() -> {
+                                    adapter.notifyDataSetChanged();
+                                });
+                            }).start();
+                        });
+                    }).addOnFailureListener(e -> {
+                        //
+                        Log.e(MY_TAG, "onCreate: " + e.getMessage());
+                    });
         }).start();
-
-        firestore = FirebaseFirestore.getInstance();
-
-        userID = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         firestore.collection(Constants.DB_FIRESTORE_COLLECTIONS_USERS).document(recipientID).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -111,8 +161,15 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessageToRecipient(String message) {
         // send message to recipient
         Log.d(MY_TAG, "UID: " + userID + " RID: " + recipientID + " RTk: " + recipientToken + " MSG: " + message);
+        String conversationID;
+        if (userID.compareTo(recipientID) > 0) {
+            conversationID = recipientID + "-" + userID;
+        } else {
+            conversationID = userID + "-" + recipientID;
+        }
+
         CollectionReference mCollection = firestore.collection(Constants.DB_FIRESTORE_COLLECTIONS_MESSAGES)
-                .document(userID + "-" + recipientID)
+                .document(conversationID)
                 .collection(Constants.DB_FIRESTORE_SUB_COLLECTIONS_MESSAGE);
 
         long timestamp = System.currentTimeMillis();
@@ -132,6 +189,7 @@ public class ChatActivity extends AppCompatActivity {
                         .build();
 
                 FirebaseMessaging.getInstance().send(messageToSend);
+                // ====================================================================================
 
                 Log.w(MY_TAG, "SendMessage: " + messageToSend);
                 // save message to local database
@@ -139,16 +197,21 @@ public class ChatActivity extends AppCompatActivity {
                         .document(recipientID)
                         .get()
                         .addOnCompleteListener((aTask) -> {
-                            String token = Objects.requireNonNull(aTask.getResult().get(DB_FIRESTORE_FIELD_USER_TOKEN)).toString();
-                            messageRepository.insert(new Message(message, recipientID, timestamp, token));
+                            if (aTask.isSuccessful()) {
+                                String recipientToken = Objects.requireNonNull(aTask.getResult().get(DB_FIRESTORE_FIELD_USER_TOKEN)).toString();
+                                String messageID = aTask.getResult().getId(); // TODO: look at this if data repeats
 
-                            new Thread(() -> {
-                                messagesByReceiverID = messageRepository.getIndividualsMessage(recipientID);
-                                runOnUiThread(() -> {
+                                messageRepository.insert(new Message(message, userID, recipientID, timestamp, messageID, recipientToken));
+
+                                new Thread(() -> {
+                                    messagesByReceiverID = messageRepository.getIndividualsMessage(userID, recipientID);
                                     adapter.setChatMessages(Message.getChatMessagesFormat(messagesByReceiverID));
-                                    adapter.notifyDataSetChanged();
-                                });
-                            }).start();
+                                    runOnUiThread(() -> {
+                                        //
+                                        adapter.notifyDataSetChanged();
+                                    });
+                                }).start();
+                            }
                         });
             } else {
                 // message not sent

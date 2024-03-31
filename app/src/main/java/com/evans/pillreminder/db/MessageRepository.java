@@ -74,10 +74,10 @@ public class MessageRepository {
         return groupedMessages;
     }
 
-    public List<Message> getIndividualsMessage(String recipientID) {
-        messageDAO.getMessagesByReceiverID(recipientID);
+    public List<Message> getIndividualsMessage(String userID, String recipientID) {
+        messageDAO.getMessagesByReceiverID(userID, recipientID);
         try {
-            return new GetIndividualsMessages(messageDAO, recipientID).execute().get();
+            return new GetIndividualsMessages(messageDAO, userID, recipientID).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -212,16 +212,17 @@ public class MessageRepository {
 
     private class GetIndividualsMessages extends AsyncTask<Void, Void, List<Message>> {
         MessageDAO messageDAO;
-        String receiverID;
+        String receiverID, userID;
 
-        public GetIndividualsMessages(MessageDAO messageDAO, String recipientID) {
+        public GetIndividualsMessages(MessageDAO messageDAO, String userID, String recipientID) {
             this.messageDAO = messageDAO;
             this.receiverID = recipientID;
+            this.userID = userID;
         }
 
         @Override
         protected List<Message> doInBackground(Void... voids) {
-            return messageDAO.getMessagesByReceiverID(receiverID);
+            return messageDAO.getMessagesByReceiverID(userID, receiverID);
         }
     }
 }

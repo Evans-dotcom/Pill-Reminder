@@ -18,6 +18,7 @@ public interface MessageDAO {
     LiveData<List<Message>> getGroupedMessages();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+//    @Query("INSERT OR IGNORE INTO "+DB_TABLE_NAME_MESSAGES+ "()")
     void insert(Message message);
 
     @Update
@@ -32,6 +33,6 @@ public interface MessageDAO {
     @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE synced = 0")
     List<Message> getUnsyncedMessages(); // Get unsynced messages
 
-    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE receiverID = :receiverID")
-    List<Message> getMessagesByReceiverID(String receiverID);
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE receiverID = :receiverID OR receiverID = :userID")
+    List<Message> getMessagesByReceiverID(String userID, String receiverID);
 }

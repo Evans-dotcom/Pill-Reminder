@@ -2,6 +2,7 @@ package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME_MESSAGES;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -16,24 +17,29 @@ import java.util.Map;
 @IgnoreExtraProperties
 @Entity(tableName = DB_TABLE_NAME_MESSAGES)
 public class Message {
-    @PrimaryKey(autoGenerate = true)
+    //    @PrimaryKey(autoGenerate = true)
     private int messageID;
     private String message;
     private String receiverID;
+    private String senderID;
     private long timestamp;
     private boolean synced;
+    //    @Unique
+    @PrimaryKey()
+    @NonNull
     private String documentId;
     private String recipientToken;
 
     public Message() {
     }
 
-    public Message(String message, String receiverID, long timestamp, String receiverToken) {
+    public Message(String message, String senderID, String receiverID, long timestamp, @NonNull String fbMessageID, String receiverToken) {
         this.message = message;
+        this.senderID = senderID;
         this.receiverID = receiverID;
         this.timestamp = timestamp;
         this.synced = false;
-        this.documentId = "EMPTY";
+        this.documentId = fbMessageID;
         this.recipientToken = receiverToken;
     }
 
@@ -57,6 +63,14 @@ public class Message {
             }
         }
         return messageList;
+    }
+
+    public String getSenderID() {
+        return senderID;
+    }
+
+    public void setSenderID(String senderID) {
+        this.senderID = senderID;
     }
 
     public String getRecipientToken() {
@@ -104,10 +118,6 @@ public class Message {
                 "senderID", userID,
                 "message", message,
                 "timestamp", timestamp);
-    }
-
-    public ChatMessage toChatMessage(String userID) {
-        return new ChatMessage(message, timestamp, userID);
     }
 
     public boolean isSynced() {
