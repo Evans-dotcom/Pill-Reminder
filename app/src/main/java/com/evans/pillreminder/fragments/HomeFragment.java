@@ -17,18 +17,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.MedicationRecyclerAdapter;
-import com.evans.pillreminder.db.Medication;
 import com.evans.pillreminder.db.MedicationViewModel;
 
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -86,11 +83,8 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
 
         // view model
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
-            @Override
-            public void onChanged(List<Medication> medications) {
-                // update the UI
-            }
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), medications -> {
+            // update the UI
         });
         // end view model
 
@@ -107,13 +101,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         medicationRecyclerView.setAdapter(medicationRecyclerAdapter);
 
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
-        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
-            @Override
-            public void onChanged(List<Medication> medications) {
-                // update the cached copy of the words in the adapter
-                medicationRecyclerAdapter.setMedications(medications);
-                medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
-            }
+        medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), medications -> {
+            // update the cached copy of the words in the adapter
+            medicationRecyclerAdapter.setMedications(medications);
+            medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
         });
 
         selectedDate.setOnClickListener(this);

@@ -1,117 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cardMedication"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:backgroundTint="@color/backgroundTint"
-    app:cardCornerRadius="20dp"
-    app:cardUseCompatPadding="true"
+    android:orientation="vertical"
     tools:ignore="HardcodedText">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp">
+        android:id="@+id/scheduleTimeViewLayout"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/transparent"
+        android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/medCardLayout1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/rounded_end"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="15dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/medCardPillImg"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/baseline_water_drop_24" />
-
-            <TextView
-                android:id="@+id/medCardPillName"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ARV"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:src="@drawable/baseline_access_alarm_24" />
 
             <TextView
-                android:id="@+id/medCardPillDosage"
+                android:id="@+id/tvTimeCardScheduledTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="2"
-                android:textColor="#707070"
-                android:textSize="20sp" />
+                android:text="08:30"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/medCardLayout1"
-            android:layout_marginTop="5dp" />
 
         <LinearLayout
-            android:id="@+id/medCardLayout2"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/medCardLayout1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/customSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:thumb="@drawable/custom_switch_thumb"
+                app:track="@drawable/switch_track_custom"
+                app:trackTint="@color/colorPurple" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp">
 
             <LinearLayout
+                android:id="@+id/medCardLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="5dp">
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/medCardPillImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/baseline_water_drop_24" />
 
                 <TextView
+                    android:id="@+id/medCardPillName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Have you taken?" />
+                    android:text="ARV"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/medCardPillDosage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="2"
+                    android:textColor="#707070"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/medCardLayout1"
+                android:layout_marginTop="5dp" />
+
+            <LinearLayout
+                android:id="@+id/medCardLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/medCardLayout1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="5dp">
 
-                    <Button
-                        android:id="@+id/btnCardMedicationMissed"
-                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/card_medication_missed"
-                        android:backgroundTint="@color/lightOrange"
-                        android:drawableLeft="@drawable/outline_cancel_24"
-                        android:drawableTint="@color/orange"
-                        android:text="Not Taken"
-                        android:textAllCaps="false"
-                        android:textColor="@color/orange"
-                        android:tooltipText="Not Taken" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Have you taken?" />
 
-                    <Button
-                        android:id="@+id/btnCardMedicationTaken"
-                        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/card_medication_taken"
-                        android:backgroundTint="@color/lightOrange"
-                        android:drawableLeft="@drawable/baseline_done_24"
-                        android:drawableTint="@color/skyBlue"
-                        android:text="Taken"
-                        android:textAllCaps="false"
-                        android:textColor="@color/skyBlue"
-                        android:tooltipText="Taken" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnCardMedicationMissed"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/card_medication_missed"
+                            android:backgroundTint="@color/lightOrange"
+                            android:drawableLeft="@drawable/outline_cancel_24"
+                            android:drawableTint="@color/orange"
+                            android:text="Not Taken"
+                            android:textAllCaps="false"
+                            android:textColor="@color/orange"
+                            android:tooltipText="Not Taken" />
+
+                        <Button
+                            android:id="@+id/btnCardMedicationTaken"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/card_medication_taken"
+                            android:backgroundTint="@color/lightOrange"
+                            android:drawableLeft="@drawable/baseline_done_24"
+                            android:drawableTint="@color/skyBlue"
+                            android:text="Taken"
+                            android:textAllCaps="false"
+                            android:textColor="@color/skyBlue"
+                            android:tooltipText="Taken" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
-
-</androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
