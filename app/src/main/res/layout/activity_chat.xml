@@ -54,7 +54,7 @@
                     android:background="?selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:src="@drawable/baseline_camera_24"
+                    android:src="@drawable/camera_svgrepo_com"
                     app:tint="#757c82" />
             </RelativeLayout>
 

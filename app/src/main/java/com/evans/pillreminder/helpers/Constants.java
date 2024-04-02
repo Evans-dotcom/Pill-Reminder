@@ -30,6 +30,8 @@ public class Constants {
     public final static int NOTIFICATION_CHANNEL_DOCTOR_ID = 1;
     public final static String CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID = "fcm_notification";
     public final static int FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID = 444;
+    public final static String CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID_INCOMING = "fcm_notification_incoming";
+    public final static int FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID_INCOMING = 555;
 
     // Topic
     public static final String FCM_TOPIC_UPDATES = "pills_updates";

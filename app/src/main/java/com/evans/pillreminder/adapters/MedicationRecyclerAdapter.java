@@ -38,7 +38,7 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
 
     @Override
     public int getItemViewType(int position) {
-        if (!medications.get(position).getMedicationReminderTime().split(":")[0].equals(previousHour)) {
+        if (position == 0 || !medications.get(position).getMedicationReminderTime().split(":")[0].equals(previousHour)) {
             Log.w(MY_TAG, position + "Diff: " + medications.get(position).getMedicationReminderTime() + " " + previousHour);
 //            this.previousHour = medications.get(position).getMedicationReminderTime().split(":")[0];
 //            firstMedicationHour = medications.get(position).getMedicationReminderTime().split(":")[0].concat(":00");
@@ -52,7 +52,7 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
     @Override
     public void onBindViewHolder(@NonNull MedicationViewHolder holder, int position) {
         Log.w(MY_TAG, position + " onBindViewHolder: " + medications.get(position).getMedicationReminderTime() + " " + previousHour);
-        if (!medications.get(position).getMedicationReminderTime().split(":")[0].equals(previousHour)) {
+        if (position == 0 || !medications.get(position).getMedicationReminderTime().split(":")[0].equals(previousHour)) {
             this.previousHour = medications.get(position).getMedicationReminderTime().split(":")[0];
             holder.tvTimeCardScheduledTime.setText(previousHour.concat(":00"));
         }

@@ -65,6 +65,16 @@ public class MyMessage extends FirebaseMessagingService {
         // trigger broadcast receiver
     }
 
+    @Override
+    public void onSendError(@NonNull String msgId, @NonNull Exception exception) {
+        super.onSendError(msgId, exception);
+    }
+
+    @Override
+    public void onMessageSent(@NonNull String msgId) {
+        super.onMessageSent(msgId);
+    }
+
     private void showNotification(RemoteMessage msg) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID)
                 .setContentTitle(msg.getNotification().getTitle())

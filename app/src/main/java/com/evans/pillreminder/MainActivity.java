@@ -1,18 +1,23 @@
 package com.evans.pillreminder;
 
+import static com.evans.pillreminder.helpers.Constants.CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID_INCOMING;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_FIELD_USER_TOKEN;
 import static com.evans.pillreminder.helpers.Constants.FCM_TOPIC_UPDATES;
 import static com.evans.pillreminder.helpers.Constants.FILENAME_TOKEN_JSON;
+import static com.evans.pillreminder.helpers.Constants.FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID_INCOMING;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 import static com.evans.pillreminder.helpers.UtilityFunctions.saveDictionary;
 import static com.evans.pillreminder.helpers.UtilityFunctions.saveTokenToFirestore;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -94,6 +99,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
+
+        //==================================================================================
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            String channelId = String.valueOf(FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID_INCOMING);
+            String channelName = CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID_INCOMING;
+
+            NotificationManager notificationManager =
+                    getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW));
+        }
+        //==================================================================================
 
         // FIXME
         if (user == null) {

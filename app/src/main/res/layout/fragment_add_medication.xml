@@ -228,7 +228,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/red"
+                    android:backgroundTint="@color/orange"
                     android:text="Discard"
                     android:textColor="@color/textColorDefault"
                     android:textStyle="bold" />
@@ -241,7 +241,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/green"
+                    android:backgroundTint="@color/bluish"
                     android:text="Save"
                     android:textColor="@color/textColorDefault"
                     android:textStyle="bold" />
