@@ -2,6 +2,7 @@ package com.evans.pillreminder.db;
 
 import static com.evans.pillreminder.helpers.Constants.DB_TABLE_NAME_MESSAGES;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -16,25 +17,31 @@ import java.util.Map;
 @IgnoreExtraProperties
 @Entity(tableName = DB_TABLE_NAME_MESSAGES)
 public class Message {
-    @PrimaryKey(autoGenerate = true)
+    //    @PrimaryKey(autoGenerate = true)
     private int messageID;
     private String message;
     private String receiverID;
+    private String senderID;
+    private String receiverName;
     private long timestamp;
     private boolean synced;
+    //    @Unique
+    @PrimaryKey()
+    @NonNull
     private String documentId;
     private String recipientToken;
-
     public Message() {
     }
 
-    public Message(String message, String receiverID, long timestamp, String receiverToken) {
+    public Message(String message, String senderID, String receiverID, long timestamp, @NonNull String fbMessageID, String receiverToken, String receiverName) {
         this.message = message;
+        this.senderID = senderID;
         this.receiverID = receiverID;
         this.timestamp = timestamp;
         this.synced = false;
-        this.documentId = "EMPTY";
+        this.documentId = fbMessageID;
         this.recipientToken = receiverToken;
+        this.receiverName = receiverName;
     }
 
     public static List<ChatMessage> getChatMessagesFormat(List<Message> messages) {
@@ -53,10 +60,26 @@ public class Message {
         List<MessageView> messageList = new ArrayList<>();
         if (messages != null) {
             if (!messages.isEmpty()) {
-                messages.forEach(message -> messageList.add(new MessageView("Test Name Alpha", message.getTimestamp(), message.getMessage(), message.getReceiverID(), message.getRecipientToken())));
+                messages.forEach(message -> messageList.add(new MessageView(message.getReceiverName(), message.getTimestamp(), message.getMessage(), message.getReceiverID(), message.getRecipientToken())));
             }
         }
         return messageList;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public String getSenderID() {
+        return senderID;
+    }
+
+    public void setSenderID(String senderID) {
+        this.senderID = senderID;
     }
 
     public String getRecipientToken() {
@@ -104,10 +127,6 @@ public class Message {
                 "senderID", userID,
                 "message", message,
                 "timestamp", timestamp);
-    }
-
-    public ChatMessage toChatMessage(String userID) {
-        return new ChatMessage(message, timestamp, userID);
     }
 
     public boolean isSynced() {

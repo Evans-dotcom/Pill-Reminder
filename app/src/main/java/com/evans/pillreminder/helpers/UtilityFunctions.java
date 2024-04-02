@@ -2,6 +2,7 @@ package com.evans.pillreminder.helpers;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_FIELD_USER_TOKEN;
+import static com.evans.pillreminder.helpers.Constants.DB_ROOM_DB_NAME;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.app.Activity;
@@ -83,7 +84,7 @@ public class UtilityFunctions {
 
     public static Map<String, Object> readDictionaryFile(Activity context, String fileName) {
         Map<String, Object> userData = new HashMap<>();
-        JSONObject json = new JSONObject();
+        JSONObject json;
 
         String storagePath = Objects.requireNonNull(Objects.requireNonNull(context.getExternalFilesDir(null))
                 .getParentFile()).getPath() + "/SaveData/";
@@ -129,4 +130,34 @@ public class UtilityFunctions {
         return userData;
     }
 
+    public static void deleteFile(Activity activity, String fileName) {
+        Context context = activity.getApplicationContext();
+        String storagePath = Objects.requireNonNull(Objects.requireNonNull(context.getExternalFilesDir(null))
+                .getParentFile()).getPath() + "/SaveData/";
+
+        File file = new File(storagePath + fileName);
+
+        if (file.exists()) {
+            if (file.delete()) {
+                Log.i(MY_TAG, "File deleted");
+            } else {
+                Log.e(MY_TAG, "File not deleted");
+            }
+        } else {
+            Log.e(MY_TAG, "File does not exist");
+        }
+    }
+
+    public static void deleteRoomDatabase(Context context) {
+        // Delete Room database
+        context.deleteDatabase(DB_ROOM_DB_NAME);
+        Log.i(MY_TAG, "Room database deleted");
+    }
+
+    public static void updateProfileData(Activity activity, Map<String, Object> data, String filename) {
+        saveDictionary(activity, data, filename); // Inefficient
+        Map<String, Object> userData = readDictionaryFile(activity, filename);
+        userData.putAll(data);
+        saveDictionary(activity, userData, filename);
+    }
 }

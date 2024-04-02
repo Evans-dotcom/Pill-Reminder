@@ -24,19 +24,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     String userID;
 
     public ChatAdapter(List<ChatMessage> chatMessages) {
-        Log.d(MY_TAG, "Data: " + chatMessages);
         userID = FirebaseAuth.getInstance().getUid();
         this.chatMessages = new ArrayList<>();
         this.chatMessages = chatMessages;
     }
 
     public ChatAdapter() {
-        Log.d(MY_TAG, "Data: " + chatMessages);
         userID = FirebaseAuth.getInstance().getUid();
         this.chatMessages = new ArrayList<>();
     }
 
     public void setChatMessages(List<ChatMessage> chatMessages) {
+        Log.w(MY_TAG, "setChatMessages: " + chatMessages.get(0).getRecipientID() + " <> " +
+                chatMessages.get(0).getMessage());
+
         this.chatMessages = chatMessages;
     }
 
@@ -49,6 +50,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatAdapter.ChatViewHolder holder, int position) {
+        Log.d(MY_TAG, userID + " =>EachMessage: " + chatMessages.get(position).getRecipientID());
+
         if (!chatMessages.get(position).getRecipientID().equals(this.userID)) {
             holder.sentChatLayout.setVisibility(View.VISIBLE);
             holder.sentChat.setText(chatMessages.get(position).getMessage());

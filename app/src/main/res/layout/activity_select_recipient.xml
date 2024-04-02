@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".SelectRecipientActivity"
     tools:ignore="HardcodedText">
 
     <Toolbar
+        android:id="@+id/searchToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
@@ -32,5 +35,11 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </Toolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recipientsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchToolbar" />
 
 </RelativeLayout>

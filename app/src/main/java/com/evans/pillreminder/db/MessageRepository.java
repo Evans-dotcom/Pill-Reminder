@@ -71,13 +71,26 @@ public class MessageRepository {
     }
 
     public LiveData<List<Message>> getGroupedMessages() {
-        return groupedMessages;
+        try {
+            return new GetGroupedMessages(messageDAO).execute().get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<Message> getIndividualsMessage(String recipientID) {
-        messageDAO.getMessagesByReceiverID(recipientID);
+    public List<Message> getIndividualsMessage(String userID, String recipientID) {
+        messageDAO.getMessagesByReceiverID(userID, recipientID);
         try {
-            return new GetIndividualsMessages(messageDAO, recipientID).execute().get();
+            return new GetIndividualsMessages(messageDAO, userID, recipientID).execute().get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Message> getGroupedMessagesList() {
+//        messageDAO.getMessagesByReceiverID();
+        try {
+            return new GetGroupedMessagesList(messageDAO).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -212,16 +225,43 @@ public class MessageRepository {
 
     private class GetIndividualsMessages extends AsyncTask<Void, Void, List<Message>> {
         MessageDAO messageDAO;
-        String receiverID;
+        String receiverID, userID;
 
-        public GetIndividualsMessages(MessageDAO messageDAO, String recipientID) {
+        public GetIndividualsMessages(MessageDAO messageDAO, String userID, String recipientID) {
             this.messageDAO = messageDAO;
             this.receiverID = recipientID;
+            this.userID = userID;
         }
 
         @Override
         protected List<Message> doInBackground(Void... voids) {
-            return messageDAO.getMessagesByReceiverID(receiverID);
+            return messageDAO.getMessagesByReceiverID(userID, receiverID);
+        }
+    }
+
+    private class GetGroupedMessages extends AsyncTask<Void, Void, LiveData<List<Message>>> {
+        MessageDAO messageDAO;
+
+        public GetGroupedMessages(MessageDAO messageDAO) {
+            this.messageDAO = messageDAO;
+        }
+
+        @Override
+        protected LiveData<List<Message>> doInBackground(Void... voids) {
+            return messageDAO.getGroupedMessages();
+        }
+    }
+
+    private class GetGroupedMessagesList extends AsyncTask<Void, Void, List<Message>> {
+        MessageDAO messageDAO;
+
+        public GetGroupedMessagesList(MessageDAO messageDAO) {
+            this.messageDAO = messageDAO;
+        }
+
+        @Override
+        protected List<Message> doInBackground(Void... voids) {
+            return messageDAO.getGroupedMessagesList();
         }
     }
 }

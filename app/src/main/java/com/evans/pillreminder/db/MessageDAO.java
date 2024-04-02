@@ -14,10 +14,11 @@ import java.util.List;
 
 @Dao
 public interface MessageDAO {
-    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " AS m1 WHERE receiverID = (SELECT receiverID FROM " + DB_TABLE_NAME_MESSAGES + " AS m2 WHERE m1.receiverID = m2.receiverID) ORDER BY timestamp DESC")
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES)
     LiveData<List<Message>> getGroupedMessages();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+//    @Query("INSERT OR IGNORE INTO "+DB_TABLE_NAME_MESSAGES+ "()")
     void insert(Message message);
 
     @Update
@@ -32,6 +33,9 @@ public interface MessageDAO {
     @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE synced = 0")
     List<Message> getUnsyncedMessages(); // Get unsynced messages
 
-    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE receiverID = :receiverID")
-    List<Message> getMessagesByReceiverID(String receiverID);
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " WHERE (receiverID = :receiverID and senderID = :userID) or (receiverID = :userID and senderID = :receiverID)")
+    List<Message> getMessagesByReceiverID(String userID, String receiverID);
+
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MESSAGES + " GROUP BY receiverID")
+    List<Message> getGroupedMessagesList();
 }
