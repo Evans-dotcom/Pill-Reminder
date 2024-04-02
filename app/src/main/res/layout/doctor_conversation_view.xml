@@ -17,7 +17,7 @@
             android:layout_height="80dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/google_color" />
+            android:src="@drawable/person_silhouette_svgrepo_com" />
 
         <TextView
             android:layout_width="wrap_content"

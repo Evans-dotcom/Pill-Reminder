@@ -29,7 +29,7 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/baseline_camera_24"
+            android:src="@drawable/camera_svgrepo_com"
             tools:ignore="ContentDescription" />
 
         <ImageButton

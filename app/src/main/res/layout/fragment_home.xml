@@ -52,8 +52,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Friday 31 Nov 2020"
-                        android:textColor="@color/textColorDefault"
                         android:textAlignment="center"
+                        android:textColor="@color/textColorDefault"
                         android:textSize="20sp" />
                 </LinearLayout>
 

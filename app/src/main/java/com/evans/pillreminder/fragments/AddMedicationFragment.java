@@ -109,7 +109,6 @@ public class AddMedicationFragment extends Fragment implements View.OnClickListe
         medicationViewModel.getAllMedications().observe(getViewLifecycleOwner(), new Observer<List<Medication>>() {
             @Override
             public void onChanged(List<Medication> medications) {
-                Toast.makeText(view.getContext(), "DataUpdated: ", Toast.LENGTH_SHORT).show();
             }
         });
 

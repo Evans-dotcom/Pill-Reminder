@@ -17,7 +17,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/google_color" />
+            android:src="@drawable/person_silhouette_svgrepo_com" />
 
         <TextView
             android:id="@+id/senderName"
