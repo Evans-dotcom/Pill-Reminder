@@ -7,16 +7,20 @@ import static com.evans.pillreminder.helpers.Constants.FCM_TOPIC_UPDATES;
 import static com.evans.pillreminder.helpers.Constants.FILENAME_TOKEN_JSON;
 import static com.evans.pillreminder.helpers.Constants.FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID_INCOMING;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+import static com.evans.pillreminder.helpers.Constants.OFFLINE_NOTIFICATION_REMINDER_ID;
 import static com.evans.pillreminder.helpers.UtilityFunctions.saveDictionary;
 import static com.evans.pillreminder.helpers.UtilityFunctions.saveTokenToFirestore;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +32,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,6 +50,7 @@ import com.evans.pillreminder.fragments.HistoryFragment;
 import com.evans.pillreminder.fragments.HomeFragment;
 import com.evans.pillreminder.fragments.NotificationsFragment;
 import com.evans.pillreminder.fragments.ProfileFragment;
+import com.evans.pillreminder.helpers.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -95,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         activity = this;
         Log.d(MY_TAG, "MAIN onCreate: ");
+
+        registerNotification();
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -219,6 +229,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            setContentView(R.layout.activity_main);
 //            loadFragment(new NotificationsFragment());
 //        }
+    }
+
+    private void registerNotification() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = Constants.OFFLINE_NOTIFICATIONS_REMINDER_NAME;
+            String description = Constants.OFFLINE_NOTIFICATIONS_REMINDER_DESCRIPTION;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(Constants.OFFLINE_NOTIFICATION_REMINDER_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        makeNotification();
+    }
+
+    private void makeNotification() {
+        // Create an explicit intent for an Activity in your app.
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constants.OFFLINE_NOTIFICATION_REMINDER_ID)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle("My notification")
+                .setContentText("Hello World!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that fires when the user taps the notification.
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            // ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            // public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                        int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            return;
+        }
+        // notificationId is a unique int for each notification that you must define.
+//        notify(NOTIFICATION_ID, builder.build());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        notificationManager.notify(Integer.parseInt(OFFLINE_NOTIFICATION_REMINDER_ID), builder.build());
     }
 
     private void retrieveTheFCMToken() {
