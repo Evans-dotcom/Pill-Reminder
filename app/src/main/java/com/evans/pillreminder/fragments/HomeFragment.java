@@ -2,9 +2,16 @@ package com.evans.pillreminder.fragments;
 
 import static com.evans.pillreminder.helpers.Constants.MONTHS;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
+import static com.evans.pillreminder.helpers.Constants.OFFLINE_NOTIFICATION_REMINDER_ID;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +23,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.evans.pillreminder.MainActivity;
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.adapters.MedicationRecyclerAdapter;
 import com.evans.pillreminder.db.MedicationViewModel;
+import com.evans.pillreminder.helpers.Constants;
+import com.evans.pillreminder.services.AlarmReceiver;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -105,12 +122,75 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
             // update the cached copy of the words in the adapter
             medicationRecyclerAdapter.setMedications(medications);
             medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
+
+            // TODO: iterate all mediactaion and set the time
+            AlarmManager alarmManager = (AlarmManager) this.requireActivity().getSystemService(Context.ALARM_SERVICE);
+            Intent alarmIntent = new Intent(this.requireActivity(), AlarmReceiver.class);
+
+            //
+            Log.i(MY_TAG, "doWork: is running in the background: " + (medications));
+
+            if (!medications.isEmpty()) {
+                medications.forEach(med -> {
+                    //
+                    SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                    try {
+                        long timeMillis = Objects.requireNonNull(format.parse(med.getMedicationReminderTime())).getTime();
+
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(requireActivity().getApplicationContext(),
+                                0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeMillis, pendingIntent);
+                        // TODO: +- 20 minutes
+                        if (System.currentTimeMillis() - timeMillis <= (20 * 60 * 1000) ||
+                                System.currentTimeMillis() <= timeMillis + (20 * 60 * 1000)) {
+                            triggerNotification(this.requireActivity().getApplicationContext());
+                        }
+                    } catch (ParseException e) {
+//                    throw new RuntimeException(e);
+                        e.printStackTrace();
+                    }
+                });
+            }
         });
 
         selectedDate.setOnClickListener(this);
         btnPrevDate.setOnClickListener(this);
         btnNextDate.setOnClickListener(this);
 
+    }
+
+    private void triggerNotification(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.OFFLINE_NOTIFICATION_REMINDER_ID)
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle("My notification")
+                .setContentText("Hello World!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that fires when the user taps the notification.
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            // ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            // public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                        int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        // notificationId is a unique int for each notification that you must define.
+//        notify(NOTIFICATION_ID, builder.build());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(Integer.parseInt(OFFLINE_NOTIFICATION_REMINDER_ID), builder.build());
+        Log.i(MY_TAG, "triggerNotification: Alarm triggered");
     }
 
     /**
