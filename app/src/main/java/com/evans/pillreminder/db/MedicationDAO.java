@@ -17,8 +17,11 @@ import java.util.List;
 
 @Dao
 public interface MedicationDAO {
-    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " WHERE resolved = 0 ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
     LiveData<List<Medication>> getAllMedications();
+
+    @Query("SELECT * FROM " + DB_TABLE_NAME_MEDICATIONS + " WHERE resolved = 1 ORDER BY " + DB_COLUMN_MEDICATION_REMINDER_TIME + " ASC")
+    LiveData<List<Medication>> getAllHistoryMedications();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Medication medication);
@@ -41,4 +44,10 @@ public interface MedicationDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertOrUpdate(Medication medication); // Insert or update medication record based on documentId
+
+    @Query(("UPDATE " + DB_TABLE_NAME_MEDICATIONS + " SET resolved = 1 WHERE medicationID = :medicationID"))
+    void resolveMedication(int medicationID);
+
+    @Query(("UPDATE " + DB_TABLE_NAME_MEDICATIONS + " SET todayTaken = 1 WHERE medicationID = :medicationID"))
+    void updateTaken(int medicationID);
 }

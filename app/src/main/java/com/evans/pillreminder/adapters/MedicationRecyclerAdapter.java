@@ -2,6 +2,7 @@ package com.evans.pillreminder.adapters;
 
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
+import android.app.Application;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,15 +20,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.evans.pillreminder.R;
 import com.evans.pillreminder.db.Medication;
+import com.evans.pillreminder.db.MedicationViewModel;
 import com.evans.pillreminder.helpers.MedicationPill;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRecyclerAdapter.MedicationViewHolder> {
+    private final MedicationViewModel medicationViewModel;
     List<Medication> medications = new ArrayList<>();
     String firstMedicationTime, lastMedicationTime, firstMedicationHour, lastMedicationHour, previousHour;
     private boolean updateTime = false;
+
+    public MedicationRecyclerAdapter(Application application) {
+        this.medicationViewModel = new MedicationViewModel(application);
+    }
 
     @NonNull
     @Override
@@ -75,6 +82,17 @@ public class MedicationRecyclerAdapter extends RecyclerView.Adapter<MedicationRe
             image = R.drawable.suppository_capsule_svg;
         }
         holder.pillImage.setImageResource(image);
+
+        holder.btnTaken.setOnClickListener(v -> {
+            Toast.makeText(v.getContext(), "Taken", Toast.LENGTH_SHORT).show();
+            medicationViewModel.updateTaken(medications.get(position));
+            medicationViewModel.resolveMedication(medications.get(position));
+        });
+
+        holder.btnNotTaken.setOnClickListener(v -> {
+            Toast.makeText(v.getContext(), "Not Taken", Toast.LENGTH_SHORT).show();
+            medicationViewModel.resolveMedication(medications.get(position));
+        });
         Log.i(MY_TAG, "Database Data: " + medications);
     }
 

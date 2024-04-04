@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
         medicationRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         medicationRecyclerView.setHasFixedSize(true);
 
-        MedicationRecyclerAdapter medicationRecyclerAdapter = new MedicationRecyclerAdapter();
+        MedicationRecyclerAdapter medicationRecyclerAdapter = new MedicationRecyclerAdapter(requireActivity().getApplication());
         medicationRecyclerView.setAdapter(medicationRecyclerAdapter);
 
         medicationViewModel = new ViewModelProvider(this).get(MedicationViewModel.class);
@@ -123,7 +123,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener, Date
             medicationRecyclerAdapter.setMedications(medications);
             medicationRecyclerAdapter.notifyDataSetChanged(); // FIXME
 
-            // TODO: iterate all mediactaion and set the time
+            // TODO: iterate all medication and set the time
             AlarmManager alarmManager = (AlarmManager) this.requireActivity().getSystemService(Context.ALARM_SERVICE);
             Intent alarmIntent = new Intent(this.requireActivity(), AlarmReceiver.class);
 
