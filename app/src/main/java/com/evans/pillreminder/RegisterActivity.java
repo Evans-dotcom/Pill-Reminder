@@ -1,6 +1,7 @@
 package com.evans.pillreminder;
 
 import static com.evans.pillreminder.helpers.Constants.DB_FIRESTORE_COLLECTIONS_USERS;
+import static com.evans.pillreminder.helpers.Constants.FILENAME_USER_DETAILS_JSON;
 import static com.evans.pillreminder.helpers.Constants.MY_TAG;
 
 import android.app.Application;
@@ -20,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.evans.pillreminder.db.User;
 import com.evans.pillreminder.db.UserViewModel;
+import com.evans.pillreminder.helpers.UtilityFunctions;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -133,6 +135,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                                         UserViewModel userViewModel = new UserViewModel((Application) getApplicationContext());
                                                         userViewModel.deleteAny();
                                                         userViewModel.insertFirst(dbUser);
+
+                                                        UtilityFunctions.saveDictionary(this, user, FILENAME_USER_DETAILS_JSON);
 
 
                                                         Intent intent = new Intent(v.getContext(), MainActivity.class);
