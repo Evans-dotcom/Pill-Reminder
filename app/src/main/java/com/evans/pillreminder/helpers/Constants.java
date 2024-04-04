@@ -26,18 +26,18 @@ public class Constants {
     public static final String DB_FIRESTORE_FIELD_USER_TOKEN = "fcmToken";
 
     // Notifications
+    public final static String OFFLINE_NOTIFICATIONS_REMINDER_NAME = "offline_medication_reminder_name";
+    public final static String OFFLINE_NOTIFICATIONS_REMINDER_DESCRIPTION = "offline_medication_reminder_name";
     public final static String CHANNEL_DOCTOR_NOTIFICATION_ID = "doctor_notification";
     public final static int NOTIFICATION_CHANNEL_DOCTOR_ID = 1;
     public final static String CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID = "fcm_notification";
     public final static int FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID = 444;
     public final static String CHANNEL_FIREBASE_CLOUD_MESSAGING_NOTIFICATION_ID_INCOMING = "fcm_notification_incoming";
     public final static int FIREBASE_CLOUD_MESSAGING_NOTIFICATION_POP_UP_ID_INCOMING = 555;
-
     // Topic
     public static final String FCM_TOPIC_UPDATES = "pills_updates";
-
-
     // Filenames
     public static final String FILENAME_TOKEN_JSON = "FCMToken.json";
     public static final String FILENAME_USER_DETAILS_JSON = "user.json";
+    public final static String OFFLINE_NOTIFICATION_REMINDER_ID = "100";
 }

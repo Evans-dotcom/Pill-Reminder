@@ -23,18 +23,22 @@ public class MedicationRepository {
     //    private final LiveData<List<Medication>> localChanges;
     private MedicationDAO medicationDAO;
     private LiveData<List<Medication>> allMedications;
+    private LiveData<List<Medication>> allHistoryMedications;
     private CollectionReference medicationsCollection;
     private FirebaseFirestore firestore;
     private volatile boolean updating = false;
+    MedicationRepository(Application application) {
+        MDatabase medDB = MDatabase.getInstance(application);
+        medicationDAO = medDB.medicationDAO();
+        allMedications = medicationDAO.getAllMedications();
+    }
 
 //    public LiveData<List<Medication>> getLocalChanges() {
 //        return localChanges;
 //    }
 
-    MedicationRepository(Application application) {
-        MDatabase medDB = MDatabase.getInstance(application);
-        medicationDAO = medDB.medicationDAO();
-        allMedications = medicationDAO.getAllMedications();
+    public LiveData<List<Medication>> getAllHistoryMedications() {
+        return medicationDAO.getAllHistoryMedications();
     }
 
     private CollectionReference getMedicationsCollection() {
@@ -70,6 +74,16 @@ public class MedicationRepository {
         }
     }
 
+    public void resolveMedication(Medication medication) {
+//        databaseWriteExecutor.execute(() -> medicationDAO.resolveMedication(documentId));
+        medication.setSynced(false);
+        new ResolveAsyncTask(medicationDAO).execute(medication);
+
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
+    }
+
     public boolean isUpdating() {
         return updating;
     }
@@ -82,6 +96,16 @@ public class MedicationRepository {
         // Update sync status to false before updating the record
         medication.setSynced(false);
         new UpdateAsyncTask(medicationDAO).execute(medication);
+
+        if (!isUpdating()) {
+            uploadLocalChangesToFirestore();
+        }
+    }
+
+    public void updateTaken(Medication medication) {
+        medication.setSynced(false);
+
+        new UpdateTakenAsync(medicationDAO).execute(medication);
 
         if (!isUpdating()) {
             uploadLocalChangesToFirestore();
@@ -134,6 +158,34 @@ public class MedicationRepository {
         protected Void doInBackground(Medication... medications) {
             medicationDAO.insert(medications[0]);
             Log.w(MY_TAG, "doInBackground: " + medications[0].getMedicationName());
+            return null;
+        }
+    }
+
+    private static class ResolveAsyncTask extends AsyncTask<Medication, Void, Void> {
+        private MedicationDAO medicationDAO;
+
+        public ResolveAsyncTask(MedicationDAO medicationDAO) {
+            this.medicationDAO = medicationDAO;
+        }
+
+        @Override
+        protected Void doInBackground(Medication... medications) {
+            medicationDAO.resolveMedication(medications[0].getMedId());
+            return null;
+        }
+    }
+
+    private static class UpdateTakenAsync extends AsyncTask<Medication, Void, Void> {
+        private MedicationDAO medicationDAO;
+
+        public UpdateTakenAsync(MedicationDAO medicationDAO) {
+            this.medicationDAO = medicationDAO;
+        }
+
+        @Override
+        protected Void doInBackground(Medication... medications) {
+            medicationDAO.updateTaken(medications[0].getMedId());
             return null;
         }
     }

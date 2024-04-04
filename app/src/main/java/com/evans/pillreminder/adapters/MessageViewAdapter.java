@@ -17,6 +17,7 @@ import com.evans.pillreminder.helpers.MessageView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +55,13 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
 
         holder.senderName.setText(userFullName);
         holder.lastMessageView.setText(messages.get(position).getLastMessage());
-        holder.lastMessageTime.setText(String.valueOf(messages.get(position).getLastMessageTime()));
+        // create time from epoch time HH:mm (DD/MM/YYYY)
+        Date date = new Date(messages.get(position).getLastMessageTime());
+        String dateTime = date.toString();
+        String time = dateTime.substring(11, 16);
+        String dateStr = dateTime.substring(0, 11);
+
+        holder.lastMessageTime.setText(time + " " + dateStr);
 
         holder.messageViewView.setOnClickListener(v -> {
             // new fragment with chats displayed

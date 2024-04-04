@@ -6,31 +6,37 @@
     tools:context=".fragments.AddMedicationFragment"
     tools:ignore="HardcodedText">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        android:layout_height="wrap_content">
 
-
-        <TextView
-            android:id="@+id/tvAddMedication"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/lightBlue"
-            android:gravity="center_horizontal"
-            android:text="Add Medication"
-            android:textSize="36sp" />
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvAddMedication">
+
+            <TextView
+                android:id="@+id/tvAddMedication"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lightBlue"
+                android:gravity="center_horizontal"
+                android:text="Add Medication"
+                android:textSize="36sp" />
+
+            <!--            <ScrollView-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_below="@id/tvAddMedication">-->
 
 
             <LinearLayout
+                android:id="@+id/layoutFillable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:orientation="vertical">
 
                 <TextView
@@ -190,64 +196,64 @@
 
                 <!-- TODO: Add camera for taking picture of the medication -->
             </LinearLayout>
-        </ScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="10dp"
-            android:orientation="vertical">
-
-            <!-- TODO: add on click to the layout -->
-            <Button
-                android:id="@+id/btnCameraAddPrescription"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:drawableLeft="@drawable/baseline_camera_24"
-                android:drawableTint="@color/black_white"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:text="Add Prescription"
-                android:textColor="@color/black_white"
-                tools:ignore="RtlHardcoded" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/layoutFillable"
                 android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
+                <!-- TODO: add on click to the layout -->
                 <Button
-                    android:id="@+id/btnAddMedDiscard"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="0dp"
+                    android:id="@+id/btnCameraAddPrescription"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/orange"
-                    android:text="Discard"
-                    android:textColor="@color/textColorDefault"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_horizontal"
+                    android:drawableLeft="@drawable/baseline_camera_24"
+                    android:drawableTint="@color/black_white"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:text="Add Prescription"
+                    android:textColor="@color/black_white"
+                    tools:ignore="RtlHardcoded" />
 
-                <Button
-                    android:id="@+id/btnAddMedSave"
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/bluish"
-                    android:text="Save"
-                    android:textColor="@color/textColorDefault"
-                    android:textStyle="bold" />
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnAddMedDiscard"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/orange"
+                        android:text="Discard"
+                        android:textColor="@color/textColorDefault"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnAddMedSave"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/bluish"
+                        android:text="Save"
+                        android:textColor="@color/textColorDefault"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
-
-        </LinearLayout>
-    </RelativeLayout>
-
+            <!--            </ScrollView>-->
+        </RelativeLayout>
+    </ScrollView>
 </FrameLayout>

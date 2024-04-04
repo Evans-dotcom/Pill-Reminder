@@ -63,6 +63,9 @@ public class Medication {
     @Nullable
     @ColumnInfo(name = DB_COLUMN_MEDICATION_DOSAGE_FOR)
     private String medicationFor; // x days, x weeks, x months
+    private boolean resolved = false;
+    private boolean todayTaken = false;
+    private String updatedAt;
 
     public Medication() {
         // empty constructor for firebase firestore
@@ -95,7 +98,26 @@ public class Medication {
         medication.setMedicationReminderTime(Objects.requireNonNull(snapshot.getString("medicationReminderTime")));
         medication.setMedicationFor(Objects.requireNonNull(snapshot.getString("medicationFor")));
         medication.setMedicationNote(snapshot.getString("medicationNote"));
+        medication.setResolved(Boolean.TRUE.equals(snapshot.getBoolean("medicationResolved")));
+        medication.setTodayTaken(Boolean.TRUE.equals(snapshot.getBoolean("todayTaken")));
+        medication.setUpdatedAt(snapshot.getString("updatedAt"));
         return medication;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
     }
 
     @NonNull
@@ -113,6 +135,7 @@ public class Medication {
                 ", medicationReminderTime='" + medicationReminderTime + '\'' +
                 ", medicationNote='" + medicationNote + '\'' +
                 ", medicationFor='" + medicationFor + '\'' +
+                ", resolved='" + resolved + '\'' +
                 '}';
     }
 
@@ -134,6 +157,9 @@ public class Medication {
         map.put("medicationReminderTime", medicationReminderTime);
         map.put("medicationFor", medicationFor);
         map.put("medicationNote", medicationNote);
+        map.put("medicationResolved", resolved);
+        map.put("todayTaken", todayTaken);
+        map.put("updatedAt", updatedAt);
         return map;
     }
 
@@ -222,5 +248,13 @@ public class Medication {
 
     public void setMedicationFor(@Nullable String medicationFor) {
         this.medicationFor = medicationFor;
+    }
+
+    public boolean isTodayTaken() {
+        return todayTaken;
+    }
+
+    public void setTodayTaken(boolean todayTaken) {
+        this.todayTaken = todayTaken;
     }
 }
